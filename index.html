@@ -1,0 +1,3437 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mongoose Complete API Reference</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 15px;
+      border-bottom: 3px solid #3498db;
+      font-size: 2.5em;
+    }
+
+    .export-section {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      border-radius: 10px;
+      color: white;
+    }
+
+    .export-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .export-btn:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-number {
+      font-size: 2.5em;
+      font-weight: bold;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 1.1em;
+      margin-top: 5px;
+    }
+
+    .controls {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .filter-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .filter-btn {
+      background: #ecf0f1;
+      border: 2px solid #bdc3c7;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+      transform: translateY(-1px);
+    }
+
+    .category-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .category-btn.active {
+      background: #e74c3c;
+      border-color: #e74c3c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+
+    th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:hover {
+      background-color: #f8f9fa;
+      transform: scale(1.005);
+      transition: all 0.2s;
+    }
+
+    .api-name {
+      font-family: 'Courier New', monospace;
+      background: #e8f4f8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #2c3e50;
+      display: inline-block;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-right: 5px;
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    /* Category colors */
+    .category-mongoose {
+      background: #9b59b6;
+      color: white;
+    }
+
+    .category-schema {
+      background: #3498db;
+      color: white;
+    }
+
+    .category-model {
+      background: #e67e22;
+      color: white;
+    }
+
+    .category-document {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .category-query {
+      background: #f39c12;
+      color: white;
+    }
+
+    /* Type colors */
+    .type-constructor {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .type-method {
+      background: #2ecc71;
+      color: white;
+    }
+
+    .type-property {
+      background: #f39c12;
+      color: white;
+    }
+
+    .type-static {
+      background: #9b59b6;
+      color: white;
+    }
+
+    .code-block {
+      background: #2c3e50;
+      color: #ecf0f1;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      margin: 8px 0;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .description {
+      line-height: 1.6;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .category-info {
+      background: #e8f4f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 5px solid #3498db;
+    }
+
+    .category-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #2c3e50;
+      margin-bottom: 5px;
+    }
+
+    .category-description {
+      color: #7f8c8d;
+      margin: 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #7f8c8d;
+      font-size: 18px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .filter-container {
+        justify-content: center;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🍃 Mongoose Complete API Reference</h1>
+
+    <div class="export-section">
+      <h2>📊 Xuất dữ liệu ra Excel</h2>
+      <p>Tải xuống file Excel chứa tất cả thông tin về Mongoose API</p>
+      <button class="export-btn" onclick="exportToExcel()">
+        📥 Tải xuống Excel
+      </button>
+    </div>
+
+    <div class="stats-container" id="statsContainer">
+      <!-- Stats will be populated by JavaScript -->
+    </div>
+
+    <div class="controls">
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="🔍 Tìm kiếm API..." oninput="filterTable(this.value)">
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">📂 Chọn danh mục:</div>
+        <div class="filter-container" id="categoryFilters">
+          <!-- Category filters will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">🏷️ Lọc theo loại:</div>
+        <div class="filter-container" id="typeFilters">
+          <!-- Type filters will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <div class="category-info" id="categoryInfo">
+      <div class="category-title" id="categoryTitle">Tất cả API</div>
+      <p class="category-description" id="categoryDescription">Hiển thị tất cả API của Mongoose</p>
+    </div>
+
+    <table id="mongooseTable">
+      <thead>
+        <tr>
+          <th style="width: 20%;">API Name</th>
+          <th style="width: 10%;">Category</th>
+          <th style="width: 10%;">Type</th>
+          <th style="width: 35%;">Description</th>
+          <th style="width: 25%;">Example</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr>
+          <td colspan="5" class="loading">⏳ Đang tải dữ liệu...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    // Data structure for different API categories
+    const apiData = {
+      mongoose: [
+        {
+          name: "Mongoose()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor chính của Mongoose. Tạo một instance mới của Mongoose với các thiết lập riêng biệt.",
+          usage: "const mongoose = require('mongoose');",
+          example: "const customMongoose = new mongoose.Mongoose();\ncustomMongoose.connect('mongodb://localhost/mydb');"
+        },
+        {
+          name: "connect()",
+          category: "mongoose",
+          type: "method",
+          description: "Kết nối tới MongoDB database. Trả về Promise.",
+          usage: "mongoose.connect(uri, options)",
+          example: "mongoose.connect('mongodb://localhost:27017/myapp', {\n  useNewUrlParser: true\n});"
+        },
+        {
+          name: "model()",
+          category: "mongoose",
+          type: "method",
+          description: "Định nghĩa model hoặc lấy model đã tồn tại. Central method để tạo models.",
+          usage: "mongoose.model(name, schema, collection)",
+          example: "const User = mongoose.model('User', userSchema);\n// Tạo model mới"
+        },
+        {
+          name: "Schema()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho Schema. Định nghĩa cấu trúc document, validation rules và middleware.",
+          usage: "new mongoose.Schema(definition, options)",
+          example: "const userSchema = new mongoose.Schema({\n  name: String,\n  age: Number\n});"
+        },
+        {
+          name: "connection",
+          category: "mongoose",
+          type: "property",
+          description: "Default connection object. Đại diện cho kết nối mặc định tới MongoDB.",
+          usage: "mongoose.connection",
+          example: "mongoose.connection.on('connected', () => \n  console.log('Connected to MongoDB')\n);"
+        }
+      ],
+      schema: [
+        {
+          name: "Schema()",
+          category: "schema",
+          type: "constructor",
+          description: "Constructor để tạo schema mới. Định nghĩa cấu trúc và quy tắc cho documents.",
+          usage: "new Schema(definition, options)",
+          example: "const userSchema = new Schema({\n  name: { type: String, required: true },\n  age: Number\n});"
+        },
+        {
+          name: "Schema.Types",
+          category: "schema",
+          type: "static",
+          description: "Object chứa tất cả các schema types có sẵn như String, Number, Date, ObjectId, etc.",
+          usage: "Schema.Types.TypeName",
+          example: "const schema = new Schema({\n  _id: Schema.Types.ObjectId,\n  price: Schema.Types.Decimal128\n});"
+        },
+        {
+          name: "Schema.indexTypes",
+          category: "schema",
+          type: "static",
+          description: "Array chứa các loại index được hỗ trợ bởi MongoDB.",
+          usage: "Schema.indexTypes",
+          example: "console.log(Schema.indexTypes);\n// ['1', '-1', 'text', '2d', '2dsphere', 'hashed']"
+        },
+        {
+          name: "add()",
+          category: "schema",
+          type: "method",
+          description: "Thêm các path mới vào schema. Cho phép mở rộng schema sau khi đã tạo.",
+          usage: "schema.add(obj, prefix)",
+          example: "userSchema.add({\n  email: String,\n  profile: {\n    bio: String,\n    avatar: String\n  }\n});"
+        },
+        {
+          name: "alias()",
+          category: "schema",
+          type: "method",
+          description: "Tạo alias cho một path. Cho phép sử dụng tên khác để truy cập cùng một field.",
+          usage: "schema.alias(from, to)",
+          example: "userSchema.alias('_id', 'id');\n// Có thể dùng user.id thay vì user._id"
+        },
+        {
+          name: "childSchemas",
+          category: "schema",
+          type: "property",
+          description: "Array chứa tất cả các child schemas (subdocument schemas) của schema này.",
+          usage: "schema.childSchemas",
+          example: "console.log(userSchema.childSchemas);\n// [{ schema: addressSchema, model: Address }]"
+        },
+        {
+          name: "clearIndexes()",
+          category: "schema",
+          type: "method",
+          description: "Xóa tất cả indexes đã định nghĩa trong schema.",
+          usage: "schema.clearIndexes()",
+          example: "userSchema.clearIndexes();\nconsole.log(userSchema.indexes()); // []"
+        },
+        {
+          name: "clone()",
+          category: "schema",
+          type: "method",
+          description: "Tạo một bản sao của schema. Hữu ích khi muốn tạo schema tương tự nhưng có một số khác biệt.",
+          usage: "schema.clone()",
+          example: "const adminSchema = userSchema.clone();\nadminSchema.add({ permissions: [String] });"
+        },
+        {
+          name: "discriminator()",
+          category: "schema",
+          type: "method",
+          description: "Tạo discriminator schema. Cho phép inheritance trong MongoDB với __t field.",
+          usage: "schema.discriminator(name, schema)",
+          example: "const eventSchema = new Schema({ time: Date });\nconst clickEventSchema = eventSchema.discriminator('ClickEvent', \n  new Schema({ element: String })\n);"
+        },
+        {
+          name: "eachPath()",
+          category: "schema",
+          type: "method",
+          description: "Lặp qua tất cả paths trong schema. Thực thi callback cho mỗi path.",
+          usage: "schema.eachPath(callback)",
+          example: "userSchema.eachPath((path, type) => {\n  console.log(`${path}: ${type.constructor.name}`);\n});"
+        },
+        {
+          name: "get()",
+          category: "schema",
+          type: "method",
+          description: "Lấy giá trị của schema option. Đọc các thiết lập cấu hình của schema.",
+          usage: "schema.get(key)",
+          example: "const strict = userSchema.get('strict');\nconsole.log('Strict mode:', strict);"
+        },
+        {
+          name: "index()",
+          category: "schema",
+          type: "method",
+          description: "Định nghĩa index cho schema. Tạo các index để tối ưu hóa truy vấn.",
+          usage: "schema.index(fields, options)",
+          example: "userSchema.index({ email: 1 }, { unique: true });\nuserSchema.index({ name: 'text', bio: 'text' });"
+        },
+        {
+          name: "indexes()",
+          category: "schema",
+          type: "method",
+          description: "Trả về array chứa tất cả indexes đã định nghĩa trong schema.",
+          usage: "schema.indexes()",
+          example: "const indexes = userSchema.indexes();\nconsole.log(indexes);\n// [{ email: 1 }, { name: 'text' }]"
+        },
+        {
+          name: "loadClass()",
+          category: "schema",
+          type: "method",
+          description: "Load các methods và statics từ ES6 class vào schema.",
+          usage: "schema.loadClass(Class)",
+          example: "class UserClass {\n  getFullName() {\n    return `${this.firstName} ${this.lastName}`;\n  }\n}\nuserSchema.loadClass(UserClass);"
+        },
+        {
+          name: "method()",
+          category: "schema",
+          type: "method",
+          description: "Thêm instance method vào schema. Methods này sẽ có sẵn trên mọi document.",
+          usage: "schema.method(name, fn) hoặc schema.method(obj)",
+          example: "userSchema.method('getFullName', function() {\n  return this.firstName + ' ' + this.lastName;\n});"
+        },
+        {
+          name: "obj",
+          category: "schema",
+          type: "property",
+          description: "Object chứa định nghĩa gốc của schema. Raw schema definition.",
+          usage: "schema.obj",
+          example: "console.log(userSchema.obj);\n// { name: String, age: Number, email: String }"
+        },
+        {
+          name: "omit()",
+          category: "schema",
+          type: "method",
+          description: "Tạo schema mới bằng cách loại bỏ các paths được chỉ định.",
+          usage: "schema.omit(paths)",
+          example: "const publicUserSchema = userSchema.omit(['password', 'secretKey']);"
+        },
+        {
+          name: "path()",
+          category: "schema",
+          type: "method",
+          description: "Lấy hoặc thiết lập path trong schema. Truy cập SchemaType instance.",
+          usage: "schema.path(path, schemaType)",
+          example: "const nameType = userSchema.path('name');\nconsole.log(nameType.instance); // 'String'"
+        },
+        {
+          name: "pathType()",
+          category: "schema",
+          type: "method",
+          description: "Trả về loại path: 'real', 'virtual', 'nested', 'adhocOrUndefined'.",
+          usage: "schema.pathType(path)",
+          example: "console.log(userSchema.pathType('name')); // 'real'\nconsole.log(userSchema.pathType('profile.bio')); // 'nested'"
+        },
+        {
+          name: "paths",
+          category: "schema",
+          type: "property",
+          description: "Object chứa tất cả paths trong schema, key là path name, value là SchemaType.",
+          usage: "schema.paths",
+          example: "console.log(Object.keys(userSchema.paths));\n// ['_id', 'name', 'age', 'email']"
+        },
+        {
+          name: "pick()",
+          category: "schema",
+          type: "method",
+          description: "Tạo schema mới chỉ chứa các paths được chỉ định.",
+          usage: "schema.pick(paths)",
+          example: "const basicUserSchema = userSchema.pick(['name', 'email']);"
+        },
+        {
+          name: "plugin()",
+          category: "schema",
+          type: "method",
+          description: "Áp dụng plugin cho schema. Thêm functionality từ bên ngoài.",
+          usage: "schema.plugin(fn, options)",
+          example: "const timestamps = require('mongoose-timestamp');\nuserSchema.plugin(timestamps);"
+        },
+        {
+          name: "post()",
+          category: "schema",
+          type: "method",
+          description: "Định nghĩa post middleware. Chạy sau khi operation hoàn thành.",
+          usage: "schema.post(method, fn)",
+          example: "userSchema.post('save', function(doc) {\n  console.log('User saved:', doc.name);\n});"
+        },
+        {
+          name: "pre()",
+          category: "schema",
+          type: "method",
+          description: "Định nghĩa pre middleware. Chạy trước khi operation được thực thi.",
+          usage: "schema.pre(method, fn)",
+          example: "userSchema.pre('save', function() {\n  this.updatedAt = new Date();\n});"
+        },
+        {
+          name: "queue()",
+          category: "schema",
+          type: "method",
+          description: "Thêm function vào compile queue. Function sẽ được gọi khi model được compile.",
+          usage: "schema.queue(method, args)",
+          example: "userSchema.queue('index', [{ email: 1 }, { unique: true }]);"
+        },
+        {
+          name: "remove()",
+          category: "schema",
+          type: "method",
+          description: "Xóa paths khỏi schema. Loại bỏ các fields không cần thiết.",
+          usage: "schema.remove(paths)",
+          example: "userSchema.remove(['temporaryField', 'obsoleteData']);"
+        },
+        {
+          name: "removeIndex()",
+          category: "schema",
+          type: "method",
+          description: "Xóa index khỏi schema definition.",
+          usage: "schema.removeIndex(index)",
+          example: "userSchema.removeIndex({ email: 1 });"
+        },
+        {
+          name: "removeVirtual()",
+          category: "schema",
+          type: "method",
+          description: "Xóa virtual field khỏi schema.",
+          usage: "schema.removeVirtual(name)",
+          example: "userSchema.removeVirtual('fullName');"
+        },
+        {
+          name: "requiredPaths()",
+          category: "schema",
+          type: "method",
+          description: "Trả về array chứa tất cả paths bắt buộc trong schema.",
+          usage: "schema.requiredPaths(invalidate)",
+          example: "const required = userSchema.requiredPaths();\nconsole.log(required); // ['name', 'email']"
+        },
+        {
+          name: "set()",
+          category: "schema",
+          type: "method",
+          description: "Thiết lập schema option. Cấu hình các thiết lập cho schema.",
+          usage: "schema.set(key, value) hoặc schema.set(obj)",
+          example: "userSchema.set('timestamps', true);\nuserSchema.set('strict', false);"
+        },
+        {
+          name: "static()",
+          category: "schema",
+          type: "method",
+          description: "Thêm static method vào schema. Methods này sẽ có sẵn trên Model.",
+          usage: "schema.static(name, fn) hoặc schema.static(obj)",
+          example: "userSchema.static('findByEmail', function(email) {\n  return this.findOne({ email });\n});"
+        },
+        {
+          name: "virtual()",
+          category: "schema",
+          type: "method",
+          description: "Tạo virtual field. Fields không được lưu trong database nhưng có thể computed.",
+          usage: "schema.virtual(name, options)",
+          example: "userSchema.virtual('fullName').get(function() {\n  return this.firstName + ' ' + this.lastName;\n});"
+        },
+        {
+          name: "virtualpath()",
+          category: "schema",
+          type: "method",
+          description: "Lấy virtual path theo tên. Trả về VirtualType instance.",
+          usage: "schema.virtualpath(name)",
+          example: "const fullNameVirtual = userSchema.virtualpath('fullName');\nconsole.log(fullNameVirtual.getters);"
+        },
+        {
+          name: "virtuals",
+          category: "schema",
+          type: "property",
+          description: "Object chứa tất cả virtual paths trong schema.",
+          usage: "schema.virtuals",
+          example: "console.log(Object.keys(userSchema.virtuals));\n// ['id', 'fullName']"
+        },
+        {
+          name: "Schema.reserved",
+          category: "schema",
+          type: "static",
+          description: "Object chứa các tên path bị reserved (không thể sử dụng).",
+          usage: "Schema.reserved",
+          example: "console.log(Schema.reserved);\n// { _posts: true, toObject: true, validate: true, ... }"
+        }
+      ],
+      connection: [
+        {
+          name: "Connection()",
+          category: "connection",
+          type: "constructor",
+          description: "Constructor để tạo connection instance mới. Quản lý kết nối tới MongoDB database.",
+          usage: "new Connection(base)",
+          example: "const conn = new mongoose.Connection(mongoose);\n// Tạo connection mới"
+        },
+        {
+          name: "asPromise()",
+          category: "connection",
+          type: "method",
+          description: "Trả về Promise sẽ resolve khi connection đã sẵn sàng hoặc reject nếu có lỗi.",
+          usage: "connection.asPromise()",
+          example: "const conn = mongoose.createConnection();\nconn.asPromise().then(() => {\n  console.log('Connection ready!');\n});"
+        },
+        {
+          name: "client",
+          category: "connection",
+          type: "property",
+          description: "MongoDB client instance. Cung cấp truy cập tới native MongoDB driver client.",
+          usage: "connection.client",
+          example: "const client = mongoose.connection.client;\nconsole.log(client.topology.description);"
+        },
+        {
+          name: "close()",
+          category: "connection",
+          type: "method",
+          description: "Đóng connection. Ngắt kết nối và giải phóng tài nguyên.",
+          usage: "connection.close(callback)",
+          example: "await mongoose.connection.close();\nconsole.log('Connection closed');"
+        },
+        {
+          name: "collection()",
+          category: "connection",
+          type: "method",
+          description: "Lấy collection instance từ connection. Truy cập trực tiếp tới MongoDB collection.",
+          usage: "connection.collection(name, options)",
+          example: "const users = mongoose.connection.collection('users');\nconst count = await users.countDocuments();"
+        },
+        {
+          name: "collections",
+          category: "connection",
+          type: "property",
+          description: "Object chứa tất cả collection instances đã được tạo từ connection này.",
+          usage: "connection.collections",
+          example: "console.log(Object.keys(mongoose.connection.collections));\n// ['users', 'posts', 'comments']"
+        },
+        {
+          name: "config",
+          category: "connection",
+          type: "property",
+          description: "Object chứa cấu hình connection. Bao gồm các settings và options.",
+          usage: "connection.config",
+          example: "console.log(mongoose.connection.config);\n// { autoIndex: true, bufferCommands: true, ... }"
+        },
+        {
+          name: "createCollection()",
+          category: "connection",
+          type: "method",
+          description: "Tạo collection mới trong database. Sử dụng native MongoDB createCollection.",
+          usage: "connection.createCollection(name, options)",
+          example: "await mongoose.connection.createCollection('logs', {\n  capped: true,\n  size: 1024 * 1024\n});"
+        },
+        {
+          name: "db",
+          category: "connection",
+          type: "property",
+          description: "MongoDB database instance. Cung cấp truy cập tới native MongoDB Db object.",
+          usage: "connection.db",
+          example: "const admin = mongoose.connection.db.admin();\nconst info = await admin.serverInfo();"
+        },
+        {
+          name: "deleteModel()",
+          category: "connection",
+          type: "method",
+          description: "Xóa model khỏi connection registry. Hữu ích khi testing hoặc hot reloading.",
+          usage: "connection.deleteModel(name)",
+          example: "conn.deleteModel('User');\n// Model User bị xóa khỏi connection"
+        },
+        {
+          name: "destroy()",
+          category: "connection",
+          type: "method",
+          description: "Phá hủy connection hoàn toàn. Đóng connection và xóa tất cả listeners.",
+          usage: "connection.destroy()",
+          example: "await conn.destroy();\nconsole.log('Connection destroyed');"
+        },
+        {
+          name: "dropCollection()",
+          category: "connection",
+          type: "method",
+          description: "Xóa collection khỏi database. Sử dụng native MongoDB dropCollection.",
+          usage: "connection.dropCollection(name, callback)",
+          example: "await mongoose.connection.dropCollection('temp_data');\nconsole.log('Collection dropped');"
+        },
+        {
+          name: "dropDatabase()",
+          category: "connection",
+          type: "method",
+          description: "Xóa toàn bộ database. Cẩn thận khi sử dụng - sẽ xóa tất cả dữ liệu!",
+          usage: "connection.dropDatabase(callback)",
+          example: "// Cẩn thận! Sẽ xóa toàn bộ database\n// await mongoose.connection.dropDatabase();"
+        },
+        {
+          name: "get()",
+          category: "connection",
+          type: "method",
+          description: "Lấy giá trị option của connection. Đọc các thiết lập cấu hình.",
+          usage: "connection.get(key)",
+          example: "const bufferCommands = conn.get('bufferCommands');\nconsole.log('Buffer commands:', bufferCommands);"
+        },
+        {
+          name: "getClient()",
+          category: "connection",
+          type: "method",
+          description: "Lấy MongoDB client instance. Wrapper cho property client.",
+          usage: "connection.getClient()",
+          example: "const client = mongoose.connection.getClient();\nconsole.log('Client options:', client.options);"
+        },
+        {
+          name: "host",
+          category: "connection",
+          type: "property",
+          description: "Hostname của MongoDB server. Đọc từ connection string.",
+          usage: "connection.host",
+          example: "console.log('Connected to host:', mongoose.connection.host);\n// 'localhost' hoặc IP address"
+        },
+        {
+          name: "id",
+          category: "connection",
+          type: "property",
+          description: "Unique identifier của connection. Mỗi connection có ID riêng.",
+          usage: "connection.id",
+          example: "console.log('Connection ID:', mongoose.connection.id);\n// Số unique ID"
+        },
+        {
+          name: "model()",
+          category: "connection",
+          type: "method",
+          description: "Định nghĩa hoặc lấy model cho connection này. Tương tự mongoose.model nhưng chỉ cho connection cụ thể.",
+          usage: "connection.model(name, schema, collection)",
+          example: "const User = conn.model('User', userSchema);\n// Model chỉ thuộc về connection này"
+        },
+        {
+          name: "modelNames()",
+          category: "connection",
+          type: "method",
+          description: "Trả về array chứa tên của tất cả models đã đăng ký với connection này.",
+          usage: "connection.modelNames()",
+          example: "console.log('Models on this connection:', conn.modelNames());\n// ['User', 'Post']"
+        },
+        {
+          name: "models",
+          category: "connection",
+          type: "property",
+          description: "Object chứa tất cả models đã đăng ký với connection này.",
+          usage: "connection.models",
+          example: "console.log(Object.keys(conn.models));\n// ['User', 'Post', 'Comment']"
+        },
+        {
+          name: "name",
+          category: "connection",
+          type: "property",
+          description: "Tên database mà connection đang kết nối tới.",
+          usage: "connection.name",
+          example: "console.log('Database name:', mongoose.connection.name);\n// 'myapp' hoặc tên database"
+        },
+        {
+          name: "openUri()",
+          category: "connection",
+          type: "method",
+          description: "Mở connection tới MongoDB URI. Method chính để kết nối database.",
+          usage: "connection.openUri(uri, options)",
+          example: "const conn = mongoose.createConnection();\nawait conn.openUri('mongodb://localhost/testdb');"
+        },
+        {
+          name: "pass",
+          category: "connection",
+          type: "property",
+          description: "Password được sử dụng để kết nối database (nếu có authentication).",
+          usage: "connection.pass",
+          example: "console.log('Password set:', !!mongoose.connection.pass);\n// true/false"
+        },
+        {
+          name: "plugin()",
+          category: "connection",
+          type: "method",
+          description: "Áp dụng plugin cho tất cả schemas trong connection này.",
+          usage: "connection.plugin(fn, options)",
+          example: "conn.plugin(require('mongoose-timestamp'));\n// Plugin áp dụng cho tất cả models trong connection"
+        },
+        {
+          name: "plugins",
+          category: "connection",
+          type: "property",
+          description: "Array chứa tất cả plugins đã được áp dụng cho connection này.",
+          usage: "connection.plugins",
+          example: "console.log('Applied plugins:', conn.plugins.length);\n// Số lượng plugins"
+        },
+        {
+          name: "port",
+          category: "connection",
+          type: "property",
+          description: "Port number của MongoDB server. Mặc định là 27017.",
+          usage: "connection.port",
+          example: "console.log('Connected to port:', mongoose.connection.port);\n// 27017"
+        },
+        {
+          name: "readyState",
+          category: "connection",
+          type: "property",
+          description: "Trạng thái hiện tại của connection: 0=disconnected, 1=connected, 2=connecting, 3=disconnecting.",
+          usage: "connection.readyState",
+          example: "if (mongoose.connection.readyState === 1) {\n  console.log('Connected!');\n}"
+        },
+        {
+          name: "set()",
+          category: "connection",
+          type: "method",
+          description: "Thiết lập option cho connection. Cấu hình các thiết lập riêng cho connection.",
+          usage: "connection.set(key, value)",
+          example: "conn.set('bufferCommands', false);\nconn.set('debug', true);"
+        },
+        {
+          name: "setClient()",
+          category: "connection",
+          type: "method",
+          description: "Thiết lập MongoDB client cho connection. Sử dụng client có sẵn.",
+          usage: "connection.setClient(client)",
+          example: "const { MongoClient } = require('mongodb');\nconst client = new MongoClient(uri);\nconn.setClient(client);"
+        },
+        {
+          name: "startSession()",
+          category: "connection",
+          type: "method",
+          description: "Bắt đầu client session mới cho connection này. Hỗ trợ transactions.",
+          usage: "connection.startSession(options)",
+          example: "const session = await conn.startSession();\nawait session.startTransaction();"
+        },
+        {
+          name: "syncIndexes",
+          category: "connection",
+          type: "property",
+          description: "Boolean option để đồng bộ hóa indexes tự động khi models được compile.",
+          usage: "connection.syncIndexes",
+          example: "conn.syncIndexes = true;\n// Auto sync indexes when models compile"
+        },
+        {
+          name: "transaction()",
+          category: "connection",
+          type: "method",
+          description: "Chạy function trong transaction. Wrapper tiện lợi cho transactions.",
+          usage: "connection.transaction(fn, options)",
+          example: "await conn.transaction(async (session) => {\n  await User.create([{name: 'John'}], {session});\n  await Post.create([{title: 'Hello'}], {session});\n});"
+        },
+        {
+          name: "useDb()",
+          category: "connection",
+          type: "method",
+          description: "Chuyển đổi sang database khác trên cùng connection. Tạo connection mới cho database khác.",
+          usage: "connection.useDb(name, options)",
+          example: "const logsDb = conn.useDb('logs');\nconst LogModel = logsDb.model('Log', logSchema);"
+        },
+        {
+          name: "user",
+          category: "connection",
+          type: "property",
+          description: "Username được sử dụng để kết nối database (nếu có authentication).",
+          usage: "connection.user",
+          example: "console.log('Connected as user:', mongoose.connection.user);\n// username hoặc undefined"
+        },
+        {
+          name: "watch()",
+          category: "connection",
+          type: "method",
+          description: "Tạo change stream để theo dõi thay đổi trên toàn database. MongoDB 3.6+.",
+          usage: "connection.watch(pipeline, options)",
+          example: "const changeStream = mongoose.connection.watch();\nchangeStream.on('change', (change) => {\n  console.log('Database changed:', change);\n});"
+        }
+      ],// Document API Data - Thêm vào object apiData trong HTML
+      document: [
+        {
+          name: "$assertPopulated()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra và đảm bảo rằng path đã được populate. Ném lỗi nếu path chưa được populate.",
+          usage: "doc.$assertPopulated(path, values)",
+          example: "user.$assertPopulated('posts');\n// Đảm bảo posts đã được populate"
+        },
+        {
+          name: "$clone()",
+          category: "document",
+          type: "method",
+          description: "Tạo bản sao của document. Clone toàn bộ document với tất cả properties.",
+          usage: "doc.$clone()",
+          example: "const userCopy = user.$clone();\nuserCopy.name = 'New Name';\n// user gốc không bị thay đổi"
+        },
+        {
+          name: "$errors",
+          category: "document",
+          type: "property",
+          description: "Object chứa validation errors của document. Null nếu không có lỗi.",
+          usage: "doc.$errors",
+          example: "if (user.$errors) {\n  console.log('Validation errors:', user.$errors);\n}"
+        },
+        {
+          name: "$getAllSubdocs()",
+          category: "document",
+          type: "method",
+          description: "Lấy tất cả subdocuments trong document. Bao gồm cả nested subdocuments.",
+          usage: "doc.$getAllSubdocs()",
+          example: "const subdocs = user.$getAllSubdocs();\nconsole.log('Found subdocuments:', subdocs.length);"
+        },
+        {
+          name: "$getPopulatedDocs()",
+          category: "document",
+          type: "method",
+          description: "Lấy tất cả documents đã được populate. Trả về array các populated documents.",
+          usage: "doc.$getPopulatedDocs()",
+          example: "const populated = user.$getPopulatedDocs();\nconsole.log('Populated docs:', populated);"
+        },
+        {
+          name: "$ignore()",
+          category: "document",
+          type: "method",
+          description: "Bỏ qua path khỏi validation và save operations. Path sẽ không được xử lý.",
+          usage: "doc.$ignore(path)",
+          example: "user.$ignore('temporaryField');\n// temporaryField sẽ không được save"
+        },
+        {
+          name: "$inc()",
+          category: "document",
+          type: "method",
+          description: "Tăng giá trị numeric field. Sử dụng $inc operator của MongoDB.",
+          usage: "doc.$inc(path, val)",
+          example: "user.$inc('loginCount', 1);\n// Tăng loginCount lên 1"
+        },
+        {
+          name: "$init()",
+          category: "document",
+          type: "method",
+          description: "Khởi tạo document với data từ MongoDB. Internal method để setup document.",
+          usage: "doc.$init(obj, opts)",
+          example: "// Internal method, thường không gọi trực tiếp\ndoc.$init(dataFromDB);"
+        },
+        {
+          name: "$isDefault()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra xem path có đang sử dụng giá trị default không.",
+          usage: "doc.$isDefault(path)",
+          example: "if (user.$isDefault('status')) {\n  console.log('Status is using default value');\n}"
+        },
+        {
+          name: "$isDeleted()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra xem document có bị đánh dấu là deleted không (soft delete).",
+          usage: "doc.$isDeleted()",
+          example: "if (user.$isDeleted()) {\n  console.log('User is soft deleted');\n}"
+        },
+        {
+          name: "$isEmpty()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra xem path có empty không. Áp dụng cho arrays, objects, strings.",
+          usage: "doc.$isEmpty(path)",
+          example: "if (user.$isEmpty('tags')) {\n  console.log('Tags array is empty');\n}"
+        },
+        {
+          name: "$isModified()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra xem path có bị modified không. Tương tự isModified nhưng internal.",
+          usage: "doc.$isModified(path)",
+          example: "if (user.$isModified('email')) {\n  console.log('Email has been changed');\n}"
+        },
+        {
+          name: "$isNew",
+          category: "document",
+          type: "property",
+          description: "Boolean cho biết document có phải là new (chưa save) không.",
+          usage: "doc.$isNew",
+          example: "if (user.$isNew) {\n  console.log('This is a new user');\n}"
+        },
+        {
+          name: "$locals",
+          category: "document",
+          type: "property",
+          description: "Object để lưu trữ local data tạm thời. Không được save vào database.",
+          usage: "doc.$locals",
+          example: "user.$locals.tempData = 'some value';\n// Chỉ tồn tại trong memory"
+        },
+        {
+          name: "$markValid()",
+          category: "document",
+          type: "method",
+          description: "Đánh dấu path là valid, xóa validation errors cho path đó.",
+          usage: "doc.$markValid(path)",
+          example: "user.$markValid('email');\n// Xóa lỗi validation cho email"
+        },
+        {
+          name: "$op",
+          category: "document",
+          type: "property",
+          description: "Operation hiện tại đang được thực hiện trên document (save, remove, etc).",
+          usage: "doc.$op",
+          example: "console.log('Current operation:', user.$op);\n// 'save', 'remove', null"
+        },
+        {
+          name: "$parent()",
+          category: "document",
+          type: "method",
+          description: "Lấy parent document nếu đây là subdocument.",
+          usage: "doc.$parent()",
+          example: "const parent = address.$parent();\n// Lấy user chứa address subdocument"
+        },
+        {
+          name: "$populated()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra xem path có được populate không và trả về populate options.",
+          usage: "doc.$populated(path)",
+          example: "const populateInfo = user.$populated('posts');\nif (populateInfo) {\n  console.log('Posts were populated');\n}"
+        },
+        {
+          name: "$session()",
+          category: "document",
+          type: "method",
+          description: "Lấy hoặc thiết lập session cho document operations.",
+          usage: "doc.$session(session)",
+          example: "const session = await mongoose.startSession();\nuser.$session(session);\nawait user.save();"
+        },
+        {
+          name: "$set()",
+          category: "document",
+          type: "method",
+          description: "Thiết lập giá trị cho path. Tương tự set() nhưng có thêm options.",
+          usage: "doc.$set(path, val, type, options)",
+          example: "user.$set('name', 'John Doe');\nuser.$set({ age: 30, city: 'NYC' });"
+        },
+        {
+          name: "$timestamps()",
+          category: "document",
+          type: "method",
+          description: "Cập nhật timestamps (createdAt, updatedAt) cho document.",
+          usage: "doc.$timestamps()",
+          example: "user.$timestamps();\n// Cập nhật updatedAt = new Date()"
+        },
+        {
+          name: "$validate()",
+          category: "document",
+          type: "method",
+          description: "Validate document và trả về Promise. Internal validation method.",
+          usage: "doc.$validate(pathsToValidate, options)",
+          example: "await user.$validate(['email', 'name']);\n// Validate specific paths"
+        },
+        {
+          name: "$where",
+          category: "document",
+          type: "property",
+          description: "Object chứa query conditions sử dụng $where operator.",
+          usage: "doc.$where",
+          example: "// Chủ yếu dùng internal\nconsole.log(user.$where);"
+        },
+        {
+          name: "depopulate()",
+          category: "document",
+          type: "method",
+          description: "Loại bỏ populated values, trả về ObjectIds ban đầu.",
+          usage: "doc.depopulate(path)",
+          example: "user.depopulate('posts');\n// posts trở về array ObjectIds"
+        },
+        {
+          name: "directModifiedPaths()",
+          category: "document",
+          type: "method",
+          description: "Lấy array các paths đã được modify trực tiếp (không bao gồm nested).",
+          usage: "doc.directModifiedPaths()",
+          example: "const modified = user.directModifiedPaths();\nconsole.log('Direct modified:', modified);"
+        },
+        {
+          name: "equals()",
+          category: "document",
+          type: "method",
+          description: "So sánh document này với document khác. So sánh theo _id.",
+          usage: "doc.equals(other)",
+          example: "if (user1.equals(user2)) {\n  console.log('Same user');\n}"
+        },
+        {
+          name: "errors",
+          category: "document",
+          type: "property",
+          description: "Object chứa validation errors sau khi validate. Null nếu không có lỗi.",
+          usage: "doc.errors",
+          example: "if (user.errors) {\n  console.log('Validation failed:', user.errors);\n}"
+        },
+        {
+          name: "get()",
+          category: "document",
+          type: "method",
+          description: "Lấy giá trị của path. Có thể lấy nested paths bằng dot notation.",
+          usage: "doc.get(path, type, options)",
+          example: "const name = user.get('name');\nconst city = user.get('address.city');"
+        },
+        {
+          name: "getChanges()",
+          category: "document",
+          type: "method",
+          description: "Lấy object chứa tất cả thay đổi sẽ được áp dụng khi save.",
+          usage: "doc.getChanges()",
+          example: "const changes = user.getChanges();\nconsole.log('Will update:', changes);"
+        },
+        {
+          name: "id",
+          category: "document",
+          type: "property",
+          description: "Virtual getter cho _id field. Trả về string representation của _id.",
+          usage: "doc.id",
+          example: "console.log('User ID:', user.id);\n// String version của ObjectId"
+        },
+        {
+          name: "init()",
+          category: "document",
+          type: "method",
+          description: "Khởi tạo document với data. Đánh dấu tất cả fields là unmodified.",
+          usage: "doc.init(obj, opts)",
+          example: "user.init({ name: 'John', age: 30 });\n// Khởi tạo document state"
+        },
+        {
+          name: "inspect()",
+          category: "document",
+          type: "method",
+          description: "Trả về string representation để debugging. Sử dụng trong console.log.",
+          usage: "doc.inspect()",
+          example: "console.log(user.inspect());\n// Pretty formatted output"
+        },
+        {
+          name: "invalidate()",
+          category: "document",
+          type: "method",
+          description: "Đánh dấu path là invalid với error message. Tạo validation error.",
+          usage: "doc.invalidate(path, errorMsg, value, kind)",
+          example: "user.invalidate('email', 'Email is required');\n// Tạo validation error"
+        },
+        {
+          name: "isDirectModified()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path có được modify trực tiếp không (không qua subdocument).",
+          usage: "doc.isDirectModified(path)",
+          example: "if (user.isDirectModified('name')) {\n  console.log('Name was changed directly');\n}"
+        },
+        {
+          name: "isDirectSelected()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path có được select trực tiếp trong query không.",
+          usage: "doc.isDirectSelected(path)",
+          example: "if (user.isDirectSelected('email')) {\n  console.log('Email was explicitly selected');\n}"
+        },
+        {
+          name: "isInit()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path đã được khởi tạo chưa.",
+          usage: "doc.isInit(path)",
+          example: "if (user.isInit('profile')) {\n  console.log('Profile has been initialized');\n}"
+        },
+        {
+          name: "isModified()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path có bị thay đổi không. Có thể check nhiều paths.",
+          usage: "doc.isModified(path)",
+          example: "if (user.isModified('email')) {\n  console.log('Email has been modified');\n}\nif (user.isModified(['name', 'age'])) {\n  console.log('Name or age modified');\n}"
+        },
+        {
+          name: "isNew",
+          category: "document",
+          type: "property",
+          description: "Boolean cho biết document có phải là mới (chưa được save lần nào).",
+          usage: "doc.isNew",
+          example: "if (user.isNew) {\n  console.log('This user has never been saved');\n}"
+        },
+        {
+          name: "isSelected()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path có được include trong query select không.",
+          usage: "doc.isSelected(path)",
+          example: "if (user.isSelected('email')) {\n  console.log('Email was included in select');\n}"
+        },
+        {
+          name: "markModified()",
+          category: "document",
+          type: "method",
+          description: "Đánh dấu path là đã modified. Hữu ích khi modify nested objects.",
+          usage: "doc.markModified(path, scope)",
+          example: "user.profile.preferences.theme = 'dark';\nuser.markModified('profile.preferences');\n// Đảm bảo nested change được save"
+        },
+        {
+          name: "modifiedPaths()",
+          category: "document",
+          type: "method",
+          description: "Lấy array tất cả paths đã được modify, bao gồm cả nested paths.",
+          usage: "doc.modifiedPaths(includeChildren)",
+          example: "const modified = user.modifiedPaths();\nconsole.log('Modified paths:', modified);\n// ['name', 'profile.bio']"
+        },
+        {
+          name: "overwrite()",
+          category: "document",
+          type: "method",
+          description: "Ghi đè toàn bộ document với object mới. Thay thế tất cả fields.",
+          usage: "doc.overwrite(obj)",
+          example: "user.overwrite({ name: 'John', age: 25 });\n// Tất cả fields khác bị xóa"
+        },
+        {
+          name: "parent()",
+          category: "document",
+          type: "method",
+          description: "Lấy parent document nếu đây là subdocument.",
+          usage: "doc.parent()",
+          example: "const parent = comment.parent();\n// Lấy post chứa comment này"
+        },
+        {
+          name: "populate()",
+          category: "document",
+          type: "method",
+          description: "Populate references trong document. Load dữ liệu từ collections khác.",
+          usage: "doc.populate(path, select, model, match, options)",
+          example: "await user.populate('posts');\nawait user.populate({\n  path: 'posts',\n  select: 'title content',\n  match: { published: true }\n});"
+        },
+        {
+          name: "populated()",
+          category: "document",
+          type: "method",
+          description: "Kiểm tra path đã được populate chưa và trả về populated value.",
+          usage: "doc.populated(path)",
+          example: "const posts = user.populated('posts');\nif (posts) {\n  console.log('Posts are populated');\n}"
+        },
+        {
+          name: "replaceOne()",
+          category: "document",
+          type: "method",
+          description: "Thay thế document trong database với document hiện tại.",
+          usage: "doc.replaceOne(replacement, options)",
+          example: "await user.replaceOne({ name: 'New Name', age: 30 });\n// Thay thế toàn bộ document"
+        },
+        {
+          name: "save()",
+          category: "document",
+          type: "method",
+          description: "Lưu document vào database. Tạo mới nếu isNew, update nếu đã tồn tại.",
+          usage: "doc.save(options)",
+          example: "await user.save();\n// Hoặc với options\nawait user.save({ validateBeforeSave: false });"
+        },
+        {
+          name: "schema",
+          category: "document",
+          type: "property",
+          description: "Reference tới Schema instance mà document này dựa trên.",
+          usage: "doc.schema",
+          example: "console.log('Schema paths:', Object.keys(user.schema.paths));\nconst nameType = user.schema.path('name');"
+        },
+        {
+          name: "set()",
+          category: "document",
+          type: "method",
+          description: "Thiết lập giá trị cho path. Có thể set nhiều paths cùng lúc.",
+          usage: "doc.set(path, val, type, options)",
+          example: "user.set('name', 'John Doe');\nuser.set({\n  age: 30,\n  'profile.bio': 'Software Developer'\n});"
+        },
+        {
+          name: "toJSON()",
+          category: "document",
+          type: "method",
+          description: "Chuyển document thành JSON object. Áp dụng transform và virtuals.",
+          usage: "doc.toJSON(options)",
+          example: "const json = user.toJSON();\nconsole.log(json);\n// Hoặc với options\nconst json = user.toJSON({ virtuals: true });"
+        },
+        {
+          name: "toObject()",
+          category: "document",
+          type: "method",
+          description: "Chuyển document thành plain JavaScript object. Có nhiều options.",
+          usage: "doc.toObject(options)",
+          example: "const obj = user.toObject();\n// Hoặc với options\nconst obj = user.toObject({\n  transform: true,\n  virtuals: true\n});"
+        },
+        {
+          name: "toString()",
+          category: "document",
+          type: "method",
+          description: "Trả về string representation của document. Thường là ObjectId.",
+          usage: "doc.toString()",
+          example: "console.log(user.toString());\n// ObjectId string representation"
+        },
+        {
+          name: "unmarkModified()",
+          category: "document",
+          type: "method",
+          description: "Bỏ đánh dấu modified cho path. Path sẽ không được save trong lần save tiếp theo.",
+          usage: "doc.unmarkModified(path)",
+          example: "user.name = 'New Name';\nuser.unmarkModified('name');\n// name sẽ không được save"
+        },
+        {
+          name: "update()",
+          category: "document",
+          type: "method",
+          description: "Update document trong database mà không load về memory. Deprecated - dùng updateOne.",
+          usage: "doc.update(update, options)",
+          example: "// Deprecated - sử dụng updateOne thay thế\n// await user.update({ $set: { age: 30 } });"
+        },
+        {
+          name: "updateOne()",
+          category: "document",
+          type: "method",
+          description: "Update document trong database với update operators.",
+          usage: "doc.updateOne(update, options)",
+          example: "await user.updateOne({ $set: { age: 30 } });\nawait user.updateOne({ $inc: { loginCount: 1 } });"
+        },
+        {
+          name: "validate()",
+          category: "document",
+          type: "method",
+          description: "Validate document theo schema rules. Trả về Promise.",
+          usage: "doc.validate(pathsToValidate, options)",
+          example: "try {\n  await user.validate();\n  console.log('Validation passed');\n} catch (error) {\n  console.log('Validation failed:', error);\n}"
+        },
+        {
+          name: "validateSync()",
+          category: "document",
+          type: "method",
+          description: "Validate document đồng bộ. Trả về validation error hoặc undefined.",
+          usage: "doc.validateSync(pathsToValidate, options)",
+          example: "const error = user.validateSync();\nif (error) {\n  console.log('Validation failed:', error);\n} else {\n  console.log('Validation passed');\n}"
+        }
+      ], model: [
+        {
+          name: "Model()",
+          category: "model",
+          type: "constructor",
+          description: "Constructor để tạo Model instance. Base class cho tất cả Mongoose models.",
+          usage: "new Model(doc, fields, skipId)",
+          example: "const user = new User({ name: 'John', age: 30 });\n// Tạo document instance từ model"
+        },
+        {
+          name: "$where()",
+          category: "model",
+          type: "static",
+          description: "Tạo query sử dụng JavaScript expression. Cho phép logic phức tạp trong query.",
+          usage: "Model.$where(js)",
+          example: "const users = await User.$where('this.age > 18');\n// Sử dụng JavaScript trong query"
+        },
+        {
+          name: "aggregate()",
+          category: "model",
+          type: "static",
+          description: "Tạo aggregation pipeline. Thực hiện các operations phức tạp như group, match, sort.",
+          usage: "Model.aggregate(pipeline, options)",
+          example: "const result = await User.aggregate([\n  { $match: { age: { $gte: 18 } } },\n  { $group: { _id: '$department', count: { $sum: 1 } } }\n]);"
+        },
+        {
+          name: "applyDefaults()",
+          category: "model",
+          type: "static",
+          description: "Áp dụng giá trị default cho document object. Không tạo Model instance.",
+          usage: "Model.applyDefaults(doc)",
+          example: "const doc = { name: 'John' };\nUser.applyDefaults(doc);\n// doc sẽ có các default values"
+        },
+        {
+          name: "bulkSave",
+          category: "model",
+          type: "static",
+          description: "Lưu nhiều documents cùng lúc với validation. Hiệu quả hơn save từng cái.",
+          usage: "Model.bulkSave(docs, options)",
+          example: "const users = [new User({name: 'A'}), new User({name: 'B'})];\nawait User.bulkSave(users);"
+        },
+        {
+          name: "bulkWrite()",
+          category: "model",
+          type: "static",
+          description: "Thực hiện nhiều write operations cùng lúc. Hỗ trợ insert, update, delete.",
+          usage: "Model.bulkWrite(operations, options)",
+          example: "await User.bulkWrite([\n  { insertOne: { document: { name: 'John' } } },\n  { updateOne: { filter: { name: 'Jane' }, update: { age: 25 } } },\n  { deleteOne: { filter: { name: 'Bob' } } }\n]);"
+        },
+        {
+          name: "castObject()",
+          category: "model",
+          type: "static",
+          description: "Cast object theo schema của model. Chuyển đổi kiểu dữ liệu và validate.",
+          usage: "Model.castObject(obj, options)",
+          example: "const casted = User.castObject({\n  age: '25', // string -> number\n  active: 'true' // string -> boolean\n});"
+        },
+        {
+          name: "cleanIndexes()",
+          category: "model",
+          type: "static",
+          description: "Xóa các indexes không còn được định nghĩa trong schema.",
+          usage: "Model.cleanIndexes()",
+          example: "await User.cleanIndexes();\n// Xóa indexes cũ không cần thiết"
+        },
+        {
+          name: "count()",
+          category: "model",
+          type: "static",
+          description: "Đếm số documents match query. Deprecated - sử dụng countDocuments().",
+          usage: "Model.count(filter, callback)",
+          example: "// Deprecated - sử dụng countDocuments\n// const count = await User.count({ active: true });"
+        },
+        {
+          name: "countDocuments()",
+          category: "model",
+          type: "static",
+          description: "Đếm số documents match query. Thay thế cho count().",
+          usage: "Model.countDocuments(filter, options)",
+          example: "const activeUsers = await User.countDocuments({ active: true });\nconst totalUsers = await User.countDocuments();"
+        },
+        {
+          name: "create()",
+          category: "model",
+          type: "static",
+          description: "Tạo và lưu documents mới. Shortcut cho new Model().save().",
+          usage: "Model.create(docs, options)",
+          example: "const user = await User.create({ name: 'John', age: 30 });\n// Hoặc nhiều documents\nconst users = await User.create([\n  { name: 'John' },\n  { name: 'Jane' }\n]);"
+        },
+        {
+          name: "createCollection()",
+          category: "model",
+          type: "static",
+          description: "Tạo MongoDB collection cho model với options cụ thể.",
+          usage: "Model.createCollection(options)",
+          example: "await User.createCollection({\n  capped: true,\n  size: 1024 * 1024\n});"
+        },
+        {
+          name: "createIndexes()",
+          category: "model",
+          type: "static",
+          description: "Tạo tất cả indexes được định nghĩa trong schema.",
+          usage: "Model.createIndexes(options)",
+          example: "await User.createIndexes();\n// Tạo tất cả indexes cho User model"
+        },
+        {
+          name: "db",
+          category: "model",
+          type: "static",
+          description: "Database instance mà model này thuộc về.",
+          usage: "Model.db",
+          example: "console.log('Database name:', User.db.name);\nconst collections = await User.db.listCollections();"
+        },
+        {
+          name: "deleteMany()",
+          category: "model",
+          type: "static",
+          description: "Xóa nhiều documents match điều kiện. Không trigger middleware.",
+          usage: "Model.deleteMany(conditions, options)",
+          example: "const result = await User.deleteMany({ active: false });\nconsole.log('Deleted:', result.deletedCount);"
+        },
+        {
+          name: "deleteOne()",
+          category: "model",
+          type: "static",
+          description: "Xóa một document đầu tiên match điều kiện. Không trigger middleware.",
+          usage: "Model.deleteOne(conditions, options)",
+          example: "const result = await User.deleteOne({ name: 'John' });\nconsole.log('Deleted:', result.deletedCount);"
+        },
+        {
+          name: "diffIndexes()",
+          category: "model",
+          type: "static",
+          description: "So sánh indexes hiện tại với indexes định nghĩa trong schema.",
+          usage: "Model.diffIndexes()",
+          example: "const diff = await User.diffIndexes();\nconsole.log('Missing indexes:', diff.toDrop);\nconsole.log('New indexes:', diff.toCreate);"
+        },
+        {
+          name: "discriminator()",
+          category: "model",
+          type: "static",
+          description: "Tạo discriminator model. Inheritance pattern trong MongoDB.",
+          usage: "Model.discriminator(name, schema, value)",
+          example: "const Employee = User.discriminator('Employee', \n  new mongoose.Schema({ department: String })\n);"
+        },
+        {
+          name: "distinct()",
+          category: "model",
+          type: "static",
+          description: "Lấy các giá trị unique của field. Trả về array các giá trị khác nhau.",
+          usage: "Model.distinct(field, conditions)",
+          example: "const departments = await User.distinct('department');\nconst activeDepts = await User.distinct('department', { active: true });"
+        },
+        {
+          name: "ensureIndexes()",
+          category: "model",
+          type: "static",
+          description: "Đảm bảo tất cả indexes được tạo. Deprecated - sử dụng createIndexes().",
+          usage: "Model.ensureIndexes(options)",
+          example: "// Deprecated - sử dụng createIndexes\n// await User.ensureIndexes();"
+        },
+        {
+          name: "estimatedDocumentCount()",
+          category: "model",
+          type: "static",
+          description: "Ước tính số documents trong collection. Nhanh hơn countDocuments nhưng không chính xác.",
+          usage: "Model.estimatedDocumentCount(options)",
+          example: "const estimate = await User.estimatedDocumentCount();\nconsole.log('Estimated users:', estimate);"
+        },
+        {
+          name: "events",
+          category: "model",
+          type: "static",
+          description: "EventEmitter để lắng nghe events từ model. Hỗ trợ index events.",
+          usage: "Model.events",
+          example: "User.events.on('index', (err) => {\n  if (err) console.error('Index error:', err);\n  else console.log('Index created successfully');\n});"
+        },
+        {
+          name: "exists()",
+          category: "model",
+          type: "static",
+          description: "Kiểm tra document có tồn tại không. Trả về _id nếu tồn tại, null nếu không.",
+          usage: "Model.exists(filter)",
+          example: "const exists = await User.exists({ email: 'john@example.com' });\nif (exists) {\n  console.log('User exists with ID:', exists._id);\n}"
+        },
+        {
+          name: "find()",
+          category: "model",
+          type: "static",
+          description: "Tìm documents match điều kiện. Trả về array documents hoặc Query object.",
+          usage: "Model.find(filter, projection, options)",
+          example: "const users = await User.find({ active: true });\nconst names = await User.find({}, 'name email');\nconst query = User.find({ age: { $gte: 18 } });"
+        },
+        {
+          name: "findById()",
+          category: "model",
+          type: "static",
+          description: "Tìm document theo _id. Shortcut cho findOne({ _id: id }).",
+          usage: "Model.findById(id, projection, options)",
+          example: "const user = await User.findById('507f1f77bcf86cd799439011');\nconst userBasic = await User.findById(id, 'name email');"
+        },
+        {
+          name: "findByIdAndDelete()",
+          category: "model",
+          type: "static",
+          description: "Tìm và xóa document theo _id. Trả về document đã xóa.",
+          usage: "Model.findByIdAndDelete(id, options)",
+          example: "const deletedUser = await User.findByIdAndDelete(userId);\nif (deletedUser) {\n  console.log('Deleted user:', deletedUser.name);\n}"
+        },
+        {
+          name: "findByIdAndRemove()",
+          category: "model",
+          type: "static",
+          description: "Tìm và xóa document theo _id. Deprecated - sử dụng findByIdAndDelete().",
+          usage: "Model.findByIdAndRemove(id, options)",
+          example: "// Deprecated - sử dụng findByIdAndDelete\n// const user = await User.findByIdAndRemove(id);"
+        },
+        {
+          name: "findByIdAndUpdate()",
+          category: "model",
+          type: "static",
+          description: "Tìm và update document theo _id. Trả về document cũ hoặc mới.",
+          usage: "Model.findByIdAndUpdate(id, update, options)",
+          example: "const updatedUser = await User.findByIdAndUpdate(\n  userId,\n  { $set: { age: 30 } },\n  { new: true } // Trả về document sau update\n);"
+        },
+        {
+          name: "findOne()",
+          category: "model",
+          type: "static",
+          description: "Tìm một document đầu tiên match điều kiện. Trả về document hoặc null.",
+          usage: "Model.findOne(filter, projection, options)",
+          example: "const user = await User.findOne({ email: 'john@example.com' });\nconst admin = await User.findOne({ role: 'admin' }, 'name email');"
+        },
+        {
+          name: "findOneAndDelete()",
+          category: "model",
+          type: "static",
+          description: "Tìm và xóa một document. Trả về document đã xóa.",
+          usage: "Model.findOneAndDelete(conditions, options)",
+          example: "const deletedUser = await User.findOneAndDelete(\n  { email: 'john@example.com' }\n);"
+        },
+        {
+          name: "findOneAndRemove()",
+          category: "model",
+          type: "static",
+          description: "Tìm và xóa một document. Deprecated - sử dụng findOneAndDelete().",
+          usage: "Model.findOneAndRemove(conditions, options)",
+          example: "// Deprecated - sử dụng findOneAndDelete\n// const user = await User.findOneAndRemove({ name: 'John' });"
+        },
+        {
+          name: "findOneAndReplace()",
+          category: "model",
+          type: "static",
+          description: "Tìm và thay thế toàn bộ document. Thay thế tất cả fields.",
+          usage: "Model.findOneAndReplace(filter, replacement, options)",
+          example: "const newUser = await User.findOneAndReplace(\n  { name: 'John' },\n  { name: 'John Doe', age: 30, email: 'john@example.com' },\n  { new: true }\n);"
+        },
+        {
+          name: "findOneAndUpdate()",
+          category: "model",
+          type: "static",
+          description: "Tìm và update một document. Trả về document cũ hoặc mới.",
+          usage: "Model.findOneAndUpdate(filter, update, options)",
+          example: "const user = await User.findOneAndUpdate(\n  { email: 'john@example.com' },\n  { $inc: { loginCount: 1 } },\n  { new: true, upsert: true }\n);"
+        },
+        {
+          name: "hydrate()",
+          category: "model",
+          type: "static",
+          description: "Tạo Mongoose document từ plain object mà không init từ MongoDB.",
+          usage: "Model.hydrate(obj, projection)",
+          example: "const user = User.hydrate({\n  _id: '507f1f77bcf86cd799439011',\n  name: 'John',\n  age: 30\n});\n// Document đã hydrated, không phải isNew"
+        },
+        {
+          name: "init()",
+          category: "model",
+          type: "static",
+          description: "Khởi tạo model. Tạo collection và indexes nếu cần thiết.",
+          usage: "Model.init()",
+          example: "await User.init();\n// Model đã sẵn sàng sử dụng"
+        },
+        {
+          name: "insertMany()",
+          category: "model",
+          type: "static",
+          description: "Insert nhiều documents cùng lúc. Hiệu quả hơn create từng cái.",
+          usage: "Model.insertMany(docs, options)",
+          example: "const users = await User.insertMany([\n  { name: 'John', age: 30 },\n  { name: 'Jane', age: 25 }\n], { ordered: false });"
+        },
+        {
+          name: "inspect()",
+          category: "model",
+          type: "static",
+          description: "Trả về string representation của Model cho debugging.",
+          usage: "Model.inspect()",
+          example: "console.log(User.inspect());\n// 'Model { User }'"
+        },
+        {
+          name: "listIndexes()",
+          category: "model",
+          type: "static",
+          description: "Lấy danh sách tất cả indexes hiện có trong collection.",
+          usage: "Model.listIndexes()",
+          example: "const indexes = await User.listIndexes();\nconsole.log('Current indexes:', indexes);"
+        },
+        {
+          name: "mapReduce()",
+          category: "model",
+          type: "static",
+          description: "Thực hiện MapReduce operation trên collection. Legacy feature.",
+          usage: "Model.mapReduce(options)",
+          example: "// Legacy - khuyên dùng aggregate\nconst results = await User.mapReduce({\n  map: function() { emit(this.department, 1); },\n  reduce: function(key, values) { return values.length; }\n});"
+        },
+        {
+          name: "populate()",
+          category: "model",
+          type: "static",
+          description: "Populate documents đã có. Load references cho documents.",
+          usage: "Model.populate(docs, options)",
+          example: "const users = await User.find();\nawait User.populate(users, { path: 'posts', select: 'title' });"
+        },
+        {
+          name: "$model()",
+          category: "model",
+          type: "method",
+          description: "Lấy Model constructor từ document instance.",
+          usage: "doc.$model(name)",
+          example: "const UserModel = user.$model('User');\n// Tương đương User model"
+        },
+        {
+          name: "$remove()",
+          category: "model",
+          type: "method",
+          description: "Xóa document instance khỏi database. Deprecated - dùng deleteOne().",
+          usage: "doc.$remove(options)",
+          example: "// Deprecated - sử dụng deleteOne\n// await user.$remove();"
+        },
+        {
+          name: "$where",
+          category: "model",
+          type: "property",
+          description: "Property để lưu $where conditions trên document instance.",
+          usage: "doc.$where",
+          example: "// Internal property\nconsole.log(user.$where);"
+        },
+        {
+          name: "base",
+          category: "model",
+          type: "property",
+          description: "Mongoose instance mà model này thuộc về.",
+          usage: "doc.base",
+          example: "console.log(user.base === mongoose); // true\nconst version = user.base.version;"
+        },
+        {
+          name: "baseModelName",
+          category: "model",
+          type: "property",
+          description: "Tên của base model nếu đây là discriminator.",
+          usage: "doc.baseModelName",
+          example: "console.log(employee.baseModelName); // 'User'\n// Nếu Employee là discriminator của User"
+        },
+        {
+          name: "collection",
+          category: "model",
+          type: "property",
+          description: "MongoDB collection instance cho model này.",
+          usage: "Model.collection hoặc doc.collection",
+          example: "const collection = User.collection;\nconst count = await collection.countDocuments();\nconst userCollection = user.collection;"
+        },
+        {
+          name: "db",
+          category: "model",
+          type: "property",
+          description: "Database instance từ document perspective.",
+          usage: "doc.db",
+          example: "console.log(user.db.name);\nconst admin = user.db.admin();"
+        },
+        {
+          name: "deleteOne()",
+          category: "model",
+          type: "method",
+          description: "Xóa document instance khỏi database. Thay thế cho remove().",
+          usage: "doc.deleteOne(options)",
+          example: "await user.deleteOne();\n// User document đã bị xóa khỏi database"
+        },
+        {
+          name: "discriminators",
+          category: "model",
+          type: "property",
+          description: "Object chứa tất cả discriminator models của model này.",
+          usage: "Model.discriminators hoặc doc.discriminators",
+          example: "console.log(Object.keys(User.discriminators));\n// ['Employee', 'Customer']"
+        },
+        {
+          name: "increment()",
+          category: "model",
+          type: "method",
+          description: "Tăng __v version key của document. Dùng cho optimistic concurrency.",
+          usage: "doc.increment()",
+          example: "user.increment();\nawait user.save();\n// __v sẽ tăng lên 1"
+        },
+        {
+          name: "model()",
+          category: "model",
+          type: "method",
+          description: "Lấy Model constructor từ document, có thể chỉ định tên model khác.",
+          usage: "doc.model(name)",
+          example: "const Post = user.model('Post');\n// Lấy Post model từ user document"
+        },
+        {
+          name: "modelName",
+          category: "model",
+          type: "property",
+          description: "Tên của model.",
+          usage: "Model.modelName hoặc doc.modelName",
+          example: "console.log(User.modelName); // 'User'\nconsole.log(user.modelName); // 'User'"
+        },
+        {
+          name: "remove()",
+          category: "model",
+          type: "method",
+          description: "Xóa document instance. Deprecated - sử dụng deleteOne().",
+          usage: "doc.remove(options)",
+          example: "// Deprecated - sử dụng deleteOne\n// await user.remove();"
+        },
+        {
+          name: "save()",
+          category: "model",
+          type: "method",
+          description: "Lưu document instance vào database. Create nếu new, update nếu modified.",
+          usage: "doc.save(options)",
+          example: "user.name = 'John Doe';\nawait user.save();\n// Document đã được update"
+        },
+        {
+          name: "remove()",
+          category: "model",
+          type: "static",
+          description: "Xóa documents match điều kiện. Deprecated - sử dụng deleteMany().",
+          usage: "Model.remove(conditions, callback)",
+          example: "// Deprecated - sử dụng deleteMany\n// await User.remove({ active: false });"
+        },
+        {
+          name: "replaceOne()",
+          category: "model",
+          type: "static",
+          description: "Thay thế một document trong database với document mới.",
+          usage: "Model.replaceOne(filter, replacement, options)",
+          example: "const result = await User.replaceOne(\n  { name: 'John' },\n  { name: 'John Doe', age: 30, email: 'john@example.com' }\n);\nconsole.log('Modified:', result.modifiedCount);"
+        },
+        {
+          name: "schema",
+          category: "model",
+          type: "static",
+          description: "Schema instance mà model này dựa trên.",
+          usage: "Model.schema",
+          example: "console.log(Object.keys(User.schema.paths));\nconst nameType = User.schema.path('name');"
+        },
+        {
+          name: "startSession()",
+          category: "model",
+          type: "static",
+          description: "Bắt đầu client session cho model. Wrapper cho connection.startSession().",
+          usage: "Model.startSession(options)",
+          example: "const session = await User.startSession();\nawait session.startTransaction();\ntry {\n  await User.create([{name: 'John'}], {session});\n  await session.commitTransaction();\n} catch (error) {\n  await session.abortTransaction();\n}"
+        },
+        {
+          name: "syncIndexes()",
+          category: "model",
+          type: "static",
+          description: "Đồng bộ indexes - tạo mới và xóa indexes không cần thiết.",
+          usage: "Model.syncIndexes(options)",
+          example: "await User.syncIndexes();\n// Indexes đã được đồng bộ với schema definition"
+        },
+        {
+          name: "translateAliases()",
+          category: "model",
+          type: "static",
+          description: "Chuyển đổi aliases trong object thành tên field thực tế.",
+          usage: "Model.translateAliases(raw)",
+          example: "const translated = User.translateAliases({\n  n: 'John', // n là alias của name\n  a: 30      // a là alias của age\n});\n// { name: 'John', age: 30 }"
+        },
+        {
+          name: "update()",
+          category: "model",
+          type: "static",
+          description: "Update documents match điều kiện. Deprecated - sử dụng updateMany().",
+          usage: "Model.update(conditions, update, options)",
+          example: "// Deprecated - sử dụng updateMany\n// await User.update({}, { $set: { active: true } });"
+        },
+        {
+          name: "updateMany()",
+          category: "model",
+          type: "static",
+          description: "Update nhiều documents match điều kiện.",
+          usage: "Model.updateMany(filter, update, options)",
+          example: "const result = await User.updateMany(\n  { active: false },\n  { $set: { status: 'inactive' } }\n);\nconsole.log('Updated:', result.modifiedCount);"
+        },
+        {
+          name: "updateOne()",
+          category: "model",
+          type: "static",
+          description: "Update một document đầu tiên match điều kiện.",
+          usage: "Model.updateOne(filter, update, options)",
+          example: "const result = await User.updateOne(\n  { name: 'John' },\n  { $inc: { loginCount: 1 } }\n);\nconsole.log('Updated:', result.modifiedCount);"
+        },
+        {
+          name: "validate()",
+          category: "model",
+          type: "static",
+          description: "Validate object theo schema của model mà không tạo document.",
+          usage: "Model.validate(obj, pathsToValidate)",
+          example: "try {\n  await User.validate({ name: 'John', age: 'invalid' });\n} catch (error) {\n  console.log('Validation error:', error);\n}"
+        },
+        {
+          name: "watch()",
+          category: "model",
+          type: "static",
+          description: "Tạo change stream để theo dõi thay đổi trong collection.",
+          usage: "Model.watch(pipeline, options)",
+          example: "const changeStream = User.watch([{ $match: { 'fullDocument.active': true } }]);\nchangeStream.on('change', (change) => {\n  console.log('User changed:', change);\n});"
+        },
+        {
+          name: "where()",
+          category: "model",
+          type: "static",
+          description: "Tạo Query object với điều kiện ban đầu. Fluent interface cho queries.",
+          usage: "Model.where(path, val)",
+          example: "const users = await User\n  .where('age').gte(18)\n  .where('active').equals(true)\n  .select('name email')\n  .limit(10);"
+        }
+      ],
+      // Query API Data - Thêm vào object apiData trong HTML
+      query: [
+        {
+          name: "Query()",
+          category: "query",
+          type: "constructor",
+          description: "Constructor để tạo Query instance. Base class cho tất cả MongoDB queries.",
+          usage: "new Query(options, model, conditions, collection)",
+          example: "const query = new mongoose.Query({}, User, { name: 'John' });\n// Tạo query instance"
+        },
+        {
+          name: "$where()",
+          category: "query",
+          type: "method",
+          description: "Thêm $where condition sử dụng JavaScript expression.",
+          usage: "query.$where(js)",
+          example: "const users = await User.find().$where('this.age > 18');\n// Sử dụng JavaScript trong query"
+        },
+        {
+          name: "all()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định array phải chứa tất cả các giá trị. MongoDB $all operator.",
+          usage: "query.all(path, vals)",
+          example: "const users = await User.find().all('tags', ['javascript', 'nodejs']);\n// Tags phải chứa cả hai values"
+        },
+        {
+          name: "allowDiskUse()",
+          category: "query",
+          type: "method",
+          description: "Cho phép MongoDB sử dụng disk space cho operations lớn.",
+          usage: "query.allowDiskUse(value)",
+          example: "const result = await User.aggregate(pipeline).allowDiskUse(true);\n// Cho phép sử dụng disk cho aggregation"
+        },
+        {
+          name: "and()",
+          category: "query",
+          type: "method",
+          description: "Thêm $and condition. Tất cả conditions phải đúng.",
+          usage: "query.and(array)",
+          example: "const users = await User.find().and([\n  { age: { $gte: 18 } },\n  { active: true }\n]);"
+        },
+        {
+          name: "batchSize()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập số documents MongoDB trả về trong mỗi batch.",
+          usage: "query.batchSize(val)",
+          example: "const cursor = User.find().batchSize(100).cursor();\n// Mỗi batch 100 documents"
+        },
+        {
+          name: "box()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định rectangular area cho geospatial query.",
+          usage: "query.box(path, val)",
+          example: "const locations = await Location.find().box('coordinates', \n  [[0, 0], [10, 10]]\n);"
+        },
+        {
+          name: "cast()",
+          category: "query",
+          type: "method",
+          description: "Cast query conditions theo schema types.",
+          usage: "query.cast(model, obj)",
+          example: "// Internal method để cast query values\nquery.cast(User, { age: '25' }); // string -> number"
+        },
+        {
+          name: "catch()",
+          category: "query",
+          type: "method",
+          description: "Thêm error handler cho query Promise.",
+          usage: "query.catch(onReject)",
+          example: "User.find({ invalid: 'query' })\n  .catch(err => console.error('Query failed:', err));"
+        },
+        {
+          name: "center()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định center point cho geospatial $center query.",
+          usage: "query.center(path, area)",
+          example: "const locations = await Location.find()\n  .center('coordinates', [[0, 0], 5]);"
+        },
+        {
+          name: "centerSphere()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định center point cho spherical geospatial query.",
+          usage: "query.centerSphere(path, area)",
+          example: "const locations = await Location.find()\n  .centerSphere('coordinates', [[0, 0], 0.1]);"
+        },
+        {
+          name: "circle()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định circular area cho geospatial query.",
+          usage: "query.circle(path, area)",
+          example: "const locations = await Location.find()\n  .circle('coordinates', [[0, 0], 5]);"
+        },
+        {
+          name: "clone()",
+          category: "query",
+          type: "method",
+          description: "Tạo bản sao của query. Deep clone tất cả conditions và options.",
+          usage: "query.clone()",
+          example: "const baseQuery = User.find({ active: true });\nconst adminQuery = baseQuery.clone().where('role', 'admin');"
+        },
+        {
+          name: "collation()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập collation cho string comparison trong query.",
+          usage: "query.collation(value)",
+          example: "const users = await User.find({ name: 'john' })\n  .collation({ locale: 'en', strength: 1 }); // Case insensitive"
+        },
+        {
+          name: "comment()",
+          category: "query",
+          type: "method",
+          description: "Thêm comment vào query để debugging hoặc profiling.",
+          usage: "query.comment(val)",
+          example: "const users = await User.find()\n  .comment('Finding active users for dashboard');"
+        },
+        {
+          name: "count()",
+          category: "query",
+          type: "method",
+          description: "Đếm documents match query. Deprecated - sử dụng countDocuments().",
+          usage: "query.count(filter)",
+          example: "// Deprecated - sử dụng countDocuments\n// const count = await User.find().count();"
+        },
+        {
+          name: "countDocuments()",
+          category: "query",
+          type: "method",
+          description: "Đếm documents match query conditions.",
+          usage: "query.countDocuments(filter)",
+          example: "const activeCount = await User.find({ active: true }).countDocuments();\nconst totalCount = await User.countDocuments();"
+        },
+        {
+          name: "cursor()",
+          category: "query",
+          type: "method",
+          description: "Trả về QueryCursor để iterate qua kết quả lớn một cách hiệu quả.",
+          usage: "query.cursor(options)",
+          example: "const cursor = User.find().cursor();\nfor (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {\n  console.log(doc.name);\n}"
+        },
+        {
+          name: "deleteMany()",
+          category: "query",
+          type: "method",
+          description: "Xóa nhiều documents match query conditions.",
+          usage: "query.deleteMany(filter)",
+          example: "const result = await User.find({ active: false }).deleteMany();\nconsole.log('Deleted:', result.deletedCount);"
+        },
+        {
+          name: "deleteOne()",
+          category: "query",
+          type: "method",
+          description: "Xóa một document đầu tiên match query conditions.",
+          usage: "query.deleteOne(filter)",
+          example: "const result = await User.find({ name: 'John' }).deleteOne();\nconsole.log('Deleted:', result.deletedCount);"
+        },
+        {
+          name: "distinct()",
+          category: "query",
+          type: "method",
+          description: "Lấy các giá trị unique của field từ query results.",
+          usage: "query.distinct(field, filter)",
+          example: "const departments = await User.find({ active: true }).distinct('department');\nconsole.log('Active departments:', departments);"
+        },
+        {
+          name: "elemMatch()",
+          category: "query",
+          type: "method",
+          description: "Match documents với array field chứa element thỏa mãn điều kiện.",
+          usage: "query.elemMatch(path, filter)",
+          example: "const users = await User.find()\n  .elemMatch('skills', { name: 'JavaScript', level: { $gte: 5 } });"
+        },
+        {
+          name: "equals()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định equality condition cho path hiện tại.",
+          usage: "query.equals(val)",
+          example: "const users = await User.find().where('name').equals('John');\n// Tương đương User.find({ name: 'John' })"
+        },
+        {
+          name: "error()",
+          category: "query",
+          type: "method",
+          description: "Lấy hoặc thiết lập error cho query.",
+          usage: "query.error(err)",
+          example: "const err = query.error();\nif (err) console.log('Query error:', err);"
+        },
+        {
+          name: "estimatedDocumentCount()",
+          category: "query",
+          type: "method",
+          description: "Ước tính số documents trong collection. Nhanh nhưng không chính xác.",
+          usage: "query.estimatedDocumentCount(options)",
+          example: "const estimate = await User.estimatedDocumentCount();\nconsole.log('Estimated users:', estimate);"
+        },
+        {
+          name: "exec()",
+          category: "query",
+          type: "method",
+          description: "Thực thi query và trả về Promise với kết quả.",
+          usage: "query.exec(callback)",
+          example: "const users = await User.find({ active: true }).exec();\n// Hoặc với callback\nUser.find().exec((err, users) => { /* handle result */ });"
+        },
+        {
+          name: "exists()",
+          category: "query",
+          type: "method",
+          description: "Kiểm tra field có tồn tại hoặc không tồn tại.",
+          usage: "query.exists(path, val)",
+          example: "const usersWithEmail = await User.find().exists('email', true);\nconst usersWithoutBio = await User.find().exists('bio', false);"
+        },
+        {
+          name: "explain()",
+          category: "query",
+          type: "method",
+          description: "Trả về query execution plan thay vì kết quả query.",
+          usage: "query.explain(verbose)",
+          example: "const plan = await User.find({ name: 'John' }).explain('executionStats');\nconsole.log('Execution time:', plan.executionStats.executionTimeMillis);"
+        },
+        {
+          name: "find()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập query conditions và trả về Query object.",
+          usage: "query.find(filter)",
+          example: "const query = User.find().find({ active: true });\nconst users = await query.exec();"
+        },
+        {
+          name: "findOne()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập query để tìm một document đầu tiên.",
+          usage: "query.findOne(filter)",
+          example: "const user = await User.find().findOne({ email: 'john@example.com' });"
+        },
+        {
+          name: "findOneAndDelete()",
+          category: "query",
+          type: "method",
+          description: "Tìm và xóa một document, trả về document đã xóa.",
+          usage: "query.findOneAndDelete(filter, options)",
+          example: "const deletedUser = await User.find({ name: 'John' }).findOneAndDelete();"
+        },
+        {
+          name: "findOneAndRemove()",
+          category: "query",
+          type: "method",
+          description: "Tìm và xóa một document. Deprecated - sử dụng findOneAndDelete().",
+          usage: "query.findOneAndRemove(conditions, options)",
+          example: "// Deprecated - sử dụng findOneAndDelete\n// const user = await User.find().findOneAndRemove();"
+        },
+        {
+          name: "findOneAndReplace()",
+          category: "query",
+          type: "method",
+          description: "Tìm và thay thế toàn bộ document.",
+          usage: "query.findOneAndReplace(filter, replacement, options)",
+          example: "const newUser = await User.find({ name: 'John' })\n  .findOneAndReplace({ name: 'John Doe', age: 30 }, { new: true });"
+        },
+        {
+          name: "findOneAndUpdate()",
+          category: "query",
+          type: "method",
+          description: "Tìm và update một document, trả về document cũ hoặc mới.",
+          usage: "query.findOneAndUpdate(filter, update, options)",
+          example: "const user = await User.find({ name: 'John' })\n  .findOneAndUpdate({ $inc: { age: 1 } }, { new: true });"
+        },
+        {
+          name: "geometry()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định geometry object cho geospatial queries.",
+          usage: "query.geometry(object)",
+          example: "const locations = await Location.find()\n  .geometry({ type: 'Point', coordinates: [0, 0] });"
+        },
+        {
+          name: "get()",
+          category: "query",
+          type: "method",
+          description: "Lấy giá trị option hoặc condition từ query.",
+          usage: "query.get(path)",
+          example: "const limit = query.get('limit');\nconst nameCondition = query.get('name');"
+        },
+        {
+          name: "getFilter()",
+          category: "query",
+          type: "method",
+          description: "Lấy filter conditions của query.",
+          usage: "query.getFilter()",
+          example: "const conditions = query.getFilter();\nconsole.log('Query conditions:', conditions);"
+        },
+        {
+          name: "getOptions()",
+          category: "query",
+          type: "method",
+          description: "Lấy tất cả options của query.",
+          usage: "query.getOptions()",
+          example: "const options = query.getOptions();\nconsole.log('Query options:', options);"
+        },
+        {
+          name: "getPopulatedPaths()",
+          category: "query",
+          type: "method",
+          description: "Lấy array các paths sẽ được populate.",
+          usage: "query.getPopulatedPaths()",
+          example: "const populated = query.getPopulatedPaths();\nconsole.log('Will populate:', populated);"
+        },
+        {
+          name: "getQuery()",
+          category: "query",
+          type: "method",
+          description: "Lấy query conditions object. Alias cho getFilter().",
+          usage: "query.getQuery()",
+          example: "const conditions = query.getQuery();\nconsole.log('Query conditions:', conditions);"
+        },
+        {
+          name: "getUpdate()",
+          category: "query",
+          type: "method",
+          description: "Lấy update operations từ update query.",
+          usage: "query.getUpdate()",
+          example: "const updateOps = query.getUpdate();\nconsole.log('Update operations:', updateOps);"
+        },
+        {
+          name: "gt()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định greater than condition ($gt).",
+          usage: "query.gt(path, val)",
+          example: "const users = await User.find().where('age').gt(18);\n// age > 18"
+        },
+        {
+          name: "gte()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định greater than or equal condition ($gte).",
+          usage: "query.gte(path, val)",
+          example: "const users = await User.find().where('age').gte(18);\n// age >= 18"
+        },
+        {
+          name: "hint()",
+          category: "query",
+          type: "method",
+          description: "Gợi ý MongoDB sử dụng index cụ thể cho query.",
+          usage: "query.hint(val)",
+          example: "const users = await User.find({ email: 'john@example.com' })\n  .hint({ email: 1 }); // Sử dụng email index"
+        },
+        {
+          name: "in()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định values phải có trong array ($in operator).",
+          usage: "query.in(path, val)",
+          example: "const users = await User.find().where('status').in(['active', 'pending']);"
+        },
+        {
+          name: "intersects()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định geometry intersection cho geospatial query.",
+          usage: "query.intersects(arg)",
+          example: "const locations = await Location.find()\n  .intersects({ type: 'Polygon', coordinates: [...] });"
+        },
+        {
+          name: "j()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập journaled write concern. Đảm bảo write được ghi vào journal.",
+          usage: "query.j(val)",
+          example: "await User.updateOne({ name: 'John' }, { age: 30 }).j(true);\n// Write phải được journaled"
+        },
+        {
+          name: "lean()",
+          category: "query",
+          type: "method",
+          description: "Trả về plain JavaScript objects thay vì Mongoose documents.",
+          usage: "query.lean(val)",
+          example: "const users = await User.find().lean();\n// users là plain objects, không có Mongoose methods"
+        },
+        {
+          name: "limit()",
+          category: "query",
+          type: "method",
+          description: "Giới hạn số documents trả về.",
+          usage: "query.limit(val)",
+          example: "const users = await User.find().limit(10);\n// Chỉ lấy 10 users đầu tiên"
+        },
+        {
+          name: "lt()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định less than condition ($lt).",
+          usage: "query.lt(path, val)",
+          example: "const youngUsers = await User.find().where('age').lt(25);\n// age < 25"
+        },
+        {
+          name: "lte()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định less than or equal condition ($lte).",
+          usage: "query.lte(path, val)",
+          example: "const users = await User.find().where('age').lte(65);\n// age <= 65"
+        },
+        {
+          name: "maxDistance()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định maximum distance cho geospatial queries.",
+          usage: "query.maxDistance(path, val)",
+          example: "const nearby = await Location.find()\n  .near('coordinates', [0, 0])\n  .maxDistance(1000); // Within 1000 meters"
+        },
+        {
+          name: "maxScan()",
+          category: "query",
+          type: "method",
+          description: "Giới hạn số documents MongoDB scan. Deprecated.",
+          usage: "query.maxScan(val)",
+          example: "// Deprecated trong MongoDB 4.0+\n// const users = await User.find().maxScan(1000);"
+        },
+        {
+          name: "maxTimeMS()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập timeout cho query execution.",
+          usage: "query.maxTimeMS(ms)",
+          example: "const users = await User.find().maxTimeMS(5000);\n// Query timeout sau 5 giây"
+        },
+        {
+          name: "maxscan()",
+          category: "query",
+          type: "method",
+          description: "Alias cho maxScan(). Deprecated.",
+          usage: "query.maxscan(val)",
+          example: "// Deprecated - alias của maxScan\n// const users = await User.find().maxscan(1000);"
+        },
+        {
+          name: "merge()",
+          category: "query",
+          type: "method",
+          description: "Merge query object vào query hiện tại.",
+          usage: "query.merge(source)",
+          example: "const baseQuery = { active: true };\nconst users = await User.find().merge(baseQuery).merge({ age: { $gte: 18 } });"
+        },
+        {
+          name: "mod()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định modulus condition ($mod operator).",
+          usage: "query.mod(path, val)",
+          example: "const evenIds = await User.find().mod('_id', [2, 0]);\n// _id % 2 == 0"
+        },
+        {
+          name: "model",
+          category: "query",
+          type: "property",
+          description: "Model instance mà query này thuộc về.",
+          usage: "query.model",
+          example: "console.log('Query model:', query.model.modelName);\nconst schema = query.model.schema;"
+        },
+        {
+          name: "mongooseOptions()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập Mongoose-specific options cho query.",
+          usage: "query.mongooseOptions(options)",
+          example: "const users = await User.find()\n  .mongooseOptions({ lean: true, autopopulate: false });"
+        },
+        {
+          name: "ne()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định not equal condition ($ne).",
+          usage: "query.ne(path, val)",
+          example: "const activeUsers = await User.find().where('status').ne('deleted');\n// status != 'deleted'"
+        },
+        {
+          name: "near()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định geospatial $near condition.",
+          usage: "query.near(path, val)",
+          example: "const nearby = await Location.find()\n  .near('coordinates', { type: 'Point', coordinates: [0, 0] });"
+        },
+        {
+          name: "nearSphere()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định spherical geospatial $nearSphere condition.",
+          usage: "query.nearSphere(path, val)",
+          example: "const nearby = await Location.find()\n  .nearSphere('coordinates', [0, 0], { maxDistance: 1000 });"
+        },
+        {
+          name: "nin()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định values không được có trong array ($nin operator).",
+          usage: "query.nin(path, val)",
+          example: "const users = await User.find().where('status').nin(['deleted', 'banned']);"
+        },
+        {
+          name: "nor()",
+          category: "query",
+          type: "method",
+          description: "Thêm $nor condition. Không có condition nào được đúng.",
+          usage: "query.nor(array)",
+          example: "const users = await User.find().nor([\n  { age: { $lt: 18 } },\n  { status: 'inactive' }\n]);"
+        },
+        {
+          name: "or()",
+          category: "query",
+          type: "method",
+          description: "Thêm $or condition. Ít nhất một condition phải đúng.",
+          usage: "query.or(array)",
+          example: "const users = await User.find().or([\n  { name: 'John' },\n  { email: 'john@example.com' }\n]);"
+        },
+        {
+          name: "orFail()",
+          category: "query",
+          type: "method",
+          description: "Ném lỗi nếu query không tìm thấy document nào.",
+          usage: "query.orFail(err)",
+          example: "try {\n  const user = await User.findOne({ name: 'John' }).orFail();\n} catch (error) {\n  console.log('User not found');\n}"
+        },
+        {
+          name: "polygon()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định polygon area cho geospatial query.",
+          usage: "query.polygon(path, coordinateArray)",
+          example: "const locations = await Location.find()\n  .polygon('coordinates', [[0,0], [1,1], [1,0], [0,0]]);"
+        },
+        {
+          name: "populate()",
+          category: "query",
+          type: "method",
+          description: "Populate references với documents từ collections khác.",
+          usage: "query.populate(path, select, model, match, options)",
+          example: "const users = await User.find()\n  .populate('posts', 'title content')\n  .populate({ path: 'comments', match: { approved: true } });"
+        },
+        {
+          name: "post()",
+          category: "query",
+          type: "method",
+          description: "Thêm post middleware cho query. Chạy sau khi query hoàn thành.",
+          usage: "query.post(method, fn)",
+          example: "User.find().post('find', function(docs) {\n  console.log('Found', docs.length, 'users');\n});"
+        },
+        {
+          name: "pre()",
+          category: "query",
+          type: "method",
+          description: "Thêm pre middleware cho query. Chạy trước khi query thực thi.",
+          usage: "query.pre(method, fn)",
+          example: "User.find().pre('find', function() {\n  console.log('About to execute find query');\n});"
+        },
+        {
+          name: "projection()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập projection cho query. Chỉ định fields cần trả về.",
+          usage: "query.projection(fields)",
+          example: "const users = await User.find()\n  .projection({ name: 1, email: 1, _id: 0 });"
+        },
+        {
+          name: "read()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập read preference cho query.",
+          usage: "query.read(pref, tags)",
+          example: "const users = await User.find().read('secondary');\n// Đọc từ secondary replica"
+        },
+        {
+          name: "readConcern()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập read concern cho query.",
+          usage: "query.readConcern(level)",
+          example: "const users = await User.find().readConcern('majority');\n// Đảm bảo đọc data đã được majority acknowledge"
+        },
+        {
+          name: "regex()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định regular expression condition.",
+          usage: "query.regex(path, val)",
+          example: "const users = await User.find().where('name').regex(/^John/i);\n// Tên bắt đầu với 'John' (case insensitive)"
+        },
+        {
+          name: "remove()",
+          category: "query",
+          type: "method",
+          description: "Xóa documents match query. Deprecated - sử dụng deleteMany().",
+          usage: "query.remove(filter)",
+          example: "// Deprecated - sử dụng deleteMany\n// await User.find({ active: false }).remove();"
+        },
+        {
+          name: "replaceOne()",
+          category: "query",
+          type: "method",
+          description: "Thay thế một document với document mới hoàn toàn.",
+          usage: "query.replaceOne(filter, replacement, options)",
+          example: "const result = await User.find({ name: 'John' })\n  .replaceOne({ name: 'John Doe', age: 30, email: 'john@example.com' });"
+        },
+        {
+          name: "select()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định fields cần include hoặc exclude trong kết quả.",
+          usage: "query.select(arg)",
+          example: "const users = await User.find().select('name email');\nconst usersNoPassword = await User.find().select('-password');"
+        },
+        {
+          name: "selected()",
+          category: "query",
+          type: "method",
+          description: "Kiểm tra xem field có được select không.",
+          usage: "query.selected()",
+          example: "const isSelected = query.selected();\nconsole.log('Selected fields:', isSelected);"
+        },
+        {
+          name: "selectedExclusively()",
+          category: "query",
+          type: "method",
+          description: "Kiểm tra xem projection có phải exclusive (chỉ select một số fields).",
+          usage: "query.selectedExclusively()",
+          example: "const isExclusive = query.selectedExclusively();\nif (isExclusive) console.log('Using exclusive projection');"
+        },
+        {
+          name: "selectedInclusively()",
+          category: "query",
+          type: "method",
+          description: "Kiểm tra xem projection có phải inclusive (exclude một số fields).",
+          usage: "query.selectedInclusively()",
+          example: "const isInclusive = query.selectedInclusively();\nif (isInclusive) console.log('Using inclusive projection');"
+        },
+        {
+          name: "session()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập session cho query (để sử dụng transactions).",
+          usage: "query.session(session)",
+          example: "const session = await mongoose.startSession();\nconst users = await User.find().session(session);"
+        },
+        {
+          name: "set()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập query conditions hoặc options.",
+          usage: "query.set(path, val)",
+          example: "const query = User.find();\nquery.set('name', 'John');\nquery.set('limit', 10);"
+        },
+        {
+          name: "setOptions()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập query options từ object.",
+          usage: "query.setOptions(options)",
+          example: "query.setOptions({\n  limit: 10,\n  sort: { name: 1 },\n  lean: true\n});"
+        },
+        {
+          name: "setQuery()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập query conditions từ object.",
+          usage: "query.setQuery(conditions)",
+          example: "query.setQuery({ name: 'John', age: { $gte: 18 } });"
+        },
+        {
+          name: "setUpdate()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập update operations cho update queries.",
+          usage: "query.setUpdate(update)",
+          example: "query.setUpdate({ $set: { age: 30 }, $inc: { loginCount: 1 } });"
+        },
+        {
+          name: "size()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định array phải có size cụ thể ($size operator).",
+          usage: "query.size(path, val)",
+          example: "const users = await User.find().where('tags').size(3);\n// tags array phải có đúng 3 elements"
+        },
+        {
+          name: "skip()",
+          category: "query",
+          type: "method",
+          description: "Bỏ qua số documents đầu tiên trong kết quả.",
+          usage: "query.skip(val)",
+          example: "const users = await User.find().skip(10).limit(5);\n// Bỏ qua 10 documents đầu, lấy 5 documents tiếp theo"
+        },
+        {
+          name: "slice()",
+          category: "query",
+          type: "method",
+          description: "Giới hạn số elements trả về trong array field.",
+          usage: "query.slice(path, val)",
+          example: "const users = await User.find().slice('posts', 5);\n// Chỉ trả về 5 posts đầu tiên trong mỗi user"
+        },
+        {
+          name: "snapshot()",
+          category: "query",
+          type: "method",
+          description: "Sử dụng snapshot mode để tránh duplicate results. Deprecated.",
+          usage: "query.snapshot()",
+          example: "// Deprecated trong MongoDB 3.6+\n// const users = await User.find().snapshot();"
+        },
+        {
+          name: "sort()",
+          category: "query",
+          type: "method",
+          description: "Sắp xếp kết quả theo fields cụ thể.",
+          usage: "query.sort(arg)",
+          example: "const users = await User.find().sort({ name: 1, age: -1 });\n// Sort theo name (tăng dần), rồi age (giảm dần)"
+        },
+        {
+          name: "tailable()",
+          category: "query",
+          type: "method",
+          description: "Tạo tailable cursor cho capped collections.",
+          usage: "query.tailable(bool, opts)",
+          example: "const cursor = Log.find().tailable().cursor();\n// Cursor sẽ không đóng khi hết documents"
+        },
+        {
+          name: "then()",
+          category: "query",
+          type: "method",
+          description: "Thêm success handler cho query Promise.",
+          usage: "query.then(onFulfilled, onRejected)",
+          example: "User.find({ name: 'John' })\n  .then(users => console.log('Found users:', users))\n  .catch(err => console.error('Error:', err));"
+        },
+        {
+          name: "toConstructor()",
+          category: "query",
+          type: "method",
+          description: "Chuyển query thành constructor function có thể tái sử dụng.",
+          usage: "query.toConstructor()",
+          example: "const FindActiveUsers = User.find({ active: true }).toConstructor();\nconst users1 = await new FindActiveUsers().exec();\nconst users2 = await new FindActiveUsers().limit(5).exec();"
+        },
+        {
+          name: "transform()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập transform function để modify kết quả query.",
+          usage: "query.transform(fn)",
+          example: "const users = await User.find()\n  .transform(docs => docs.map(doc => ({ name: doc.name, id: doc._id })));"
+        },
+        {
+          name: "update()",
+          category: "query",
+          type: "method",
+          description: "Update documents match query. Deprecated - sử dụng updateMany().",
+          usage: "query.update(filter, update, options)",
+          example: "// Deprecated - sử dụng updateMany\n// await User.find({ active: false }).update({ status: 'inactive' });"
+        },
+        {
+          name: "updateMany()",
+          category: "query",
+          type: "method",
+          description: "Update nhiều documents match query conditions.",
+          usage: "query.updateMany(filter, update, options)",
+          example: "const result = await User.find({ active: false })\n  .updateMany({ $set: { status: 'inactive' } });\nconsole.log('Updated:', result.modifiedCount);"
+        },
+        {
+          name: "updateOne()",
+          category: "query",
+          type: "method",
+          description: "Update một document đầu tiên match query conditions.",
+          usage: "query.updateOne(filter, update, options)",
+          example: "const result = await User.find({ name: 'John' })\n  .updateOne({ $inc: { loginCount: 1 } });\nconsole.log('Updated:', result.modifiedCount);"
+        },
+        {
+          name: "w()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập write concern acknowledgment cho query.",
+          usage: "query.w(val)",
+          example: "await User.updateOne({ name: 'John' }, { age: 30 }).w('majority');\n// Write phải được acknowledge bởi majority"
+        },
+        {
+          name: "where()",
+          category: "query",
+          type: "method",
+          description: "Tạo fluent interface để build query conditions.",
+          usage: "query.where(path, val)",
+          example: "const users = await User.find()\n  .where('age').gte(18)\n  .where('active').equals(true)\n  .where('name').regex(/^J/);"
+        },
+        {
+          name: "within()",
+          category: "query",
+          type: "method",
+          description: "Chỉ định geospatial $within condition.",
+          usage: "query.within(val)",
+          example: "const locations = await Location.find()\n  .within({ $geometry: { type: 'Polygon', coordinates: [...] } });"
+        },
+        {
+          name: "writeConcern()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập write concern options cho query.",
+          usage: "query.writeConcern(concern)",
+          example: "await User.updateOne({ name: 'John' }, { age: 30 })\n  .writeConcern({ w: 'majority', j: true });"
+        },
+        {
+          name: "wtimeout()",
+          category: "query",
+          type: "method",
+          description: "Thiết lập timeout cho write concern acknowledgment.",
+          usage: "query.wtimeout(ms)",
+          example: "await User.updateOne({ name: 'John' }, { age: 30 })\n  .w('majority').wtimeout(5000); // Timeout 5 seconds"
+        },
+        {
+          name: "[Symbol.asyncIterator]()",
+          category: "query",
+          type: "method",
+          description: "Cho phép sử dụng for-await-of loop với query cursor.",
+          usage: "for await (const doc of query) { ... }",
+          example: "for await (const user of User.find().cursor()) {\n  console.log('Processing user:', user.name);\n  // Xử lý từng user một cách memory-efficient\n}"
+        },
+        {
+          name: "use$geoWithin",
+          category: "query",
+          type: "static",
+          description: "Static flag để sử dụng $geoWithin thay vì $within. MongoDB 2.4+.",
+          usage: "Query.use$geoWithin",
+          example: "mongoose.Query.use$geoWithin = true;\n// Sử dụng $geoWithin cho tất cả geospatial queries"
+        }
+      ],// Aggregate API Data - Thêm vào object apiData trong HTML
+      aggregate: [
+        {
+          name: "Aggregate()",
+          category: "aggregate",
+          type: "constructor",
+          description: "Constructor để tạo Aggregation pipeline. Xử lý dữ liệu phức tạp với nhiều stages.",
+          usage: "new Aggregate(pipeline)",
+          example: "const agg = new mongoose.Aggregate([\n  { $match: { active: true } },\n  { $group: { _id: '$department', count: { $sum: 1 } } }\n]);"
+        },
+        {
+          name: "addFields()",
+          category: "aggregate",
+          type: "method",
+          description: "Thêm fields mới vào documents. Tương đương $addFields stage.",
+          usage: "aggregate.addFields(arg)",
+          example: "const result = await User.aggregate()\n  .addFields({\n    fullName: { $concat: ['$firstName', ' ', '$lastName'] },\n    isAdult: { $gte: ['$age', 18] }\n  });"
+        },
+        {
+          name: "allowDiskUse()",
+          category: "aggregate",
+          type: "method",
+          description: "Cho phép MongoDB sử dụng disk space cho aggregation operations lớn.",
+          usage: "aggregate.allowDiskUse(value)",
+          example: "const result = await User.aggregate([\n  { $group: { _id: '$department', users: { $push: '$$ROOT' } } }\n]).allowDiskUse(true);"
+        },
+        {
+          name: "append()",
+          category: "aggregate",
+          type: "method",
+          description: "Thêm stage mới vào cuối aggregation pipeline.",
+          usage: "aggregate.append(...args)",
+          example: "const agg = User.aggregate().match({ active: true });\nagg.append({ $sort: { name: 1 } });\nagg.append({ $limit: 10 });"
+        },
+        {
+          name: "catch()",
+          category: "aggregate",
+          type: "method",
+          description: "Thêm error handler cho aggregation Promise.",
+          usage: "aggregate.catch(onRejected)",
+          example: "User.aggregate([{ $match: { invalid: true } }])\n  .catch(err => {\n    console.error('Aggregation failed:', err);\n  });"
+        },
+        {
+          name: "collation()",
+          category: "aggregate",
+          type: "method",
+          description: "Thiết lập collation cho string comparison trong aggregation.",
+          usage: "aggregate.collation(options)",
+          example: "const result = await User.aggregate([\n  { $match: { name: 'john' } }\n]).collation({ locale: 'en', strength: 1 }); // Case insensitive"
+        },
+        {
+          name: "count()",
+          category: "aggregate",
+          type: "method",
+          description: "Đếm số documents pass qua stage trước đó. Tương đương $count stage.",
+          usage: "aggregate.count(field)",
+          example: "const result = await User.aggregate()\n  .match({ active: true })\n  .count('activeUsers');\n// { activeUsers: 150 }"
+        },
+        {
+          name: "cursor()",
+          category: "aggregate",
+          type: "method",
+          description: "Trả về AggregationCursor để iterate qua kết quả lớn một cách hiệu quả.",
+          usage: "aggregate.cursor(options)",
+          example: "const cursor = User.aggregate([\n  { $match: { active: true } }\n]).cursor({ batchSize: 100 });\n\nfor (let doc = await cursor.next(); doc != null; doc = await cursor.next()) {\n  console.log(doc);\n}"
+        },
+        {
+          name: "densify()",
+          category: "aggregate",
+          type: "method",
+          description: "Tạo documents cho missing values trong time series. MongoDB 5.1+.",
+          usage: "aggregate.densify(arg)",
+          example: "const result = await Sensor.aggregate()\n  .densify({\n    field: 'timestamp',\n    partitionByFields: ['sensorId'],\n    range: {\n      step: 1,\n      unit: 'hour',\n      bounds: 'full'\n    }\n  });"
+        },
+        {
+          name: "exec()",
+          category: "aggregate",
+          type: "method",
+          description: "Thực thi aggregation pipeline và trả về Promise với kết quả.",
+          usage: "aggregate.exec(callback)",
+          example: "const result = await User.aggregate([\n  { $match: { active: true } },\n  { $group: { _id: '$department', count: { $sum: 1 } } }\n]).exec();\n\nconsole.log('Departments:', result);"
+        },
+        {
+          name: "explain()",
+          category: "aggregate",
+          type: "method",
+          description: "Trả về execution plan của aggregation thay vì kết quả.",
+          usage: "aggregate.explain(verbosity)",
+          example: "const plan = await User.aggregate([\n  { $match: { active: true } },\n  { $sort: { name: 1 } }\n]).explain('executionStats');\n\nconsole.log('Execution time:', plan.stages[0].executionStats.executionTimeMillisEstimate);"
+        },
+        {
+          name: "facet()",
+          category: "aggregate",
+          type: "method",
+          description: "Tạo multiple aggregation pipelines trên cùng input. Tương đương $facet stage.",
+          usage: "aggregate.facet(facet)",
+          example: "const result = await User.aggregate()\n  .facet({\n    byDepartment: [\n      { $group: { _id: '$department', count: { $sum: 1 } } }\n    ],\n    byAge: [\n      { $group: { _id: { $floor: { $divide: ['$age', 10] } }, count: { $sum: 1 } } }\n    ]\n  });"
+        },
+        {
+          name: "fill()",
+          category: "aggregate",
+          type: "method",
+          description: "Điền missing values trong time series data. MongoDB 5.3+.",
+          usage: "aggregate.fill(arg)",
+          example: "const result = await Sensor.aggregate()\n  .fill({\n    partitionBy: { sensorId: '$sensorId' },\n    partitionByFields: ['sensorId'],\n    sortBy: { timestamp: 1 },\n    output: {\n      temperature: { method: 'linear' },\n      humidity: { value: 50 }\n    }\n  });"
+        },
+        {
+          name: "graphLookup()",
+          category: "aggregate",
+          type: "method",
+          description: "Thực hiện recursive search trong collection. Tương đương $graphLookup stage.",
+          usage: "aggregate.graphLookup(options)",
+          example: "const result = await Employee.aggregate()\n  .graphLookup({\n    from: 'employees',\n    startWith: '$reportsTo',\n    connectFromField: 'reportsTo',\n    connectToField: '_id',\n    as: 'reportingHierarchy',\n    maxDepth: 4\n  });"
+        },
+        {
+          name: "group()",
+          category: "aggregate",
+          type: "method",
+          description: "Nhóm documents theo criteria và tính toán. Tương đương $group stage.",
+          usage: "aggregate.group(arg)",
+          example: "const result = await Order.aggregate()\n  .group({\n    _id: '$customerId',\n    totalAmount: { $sum: '$amount' },\n    orderCount: { $sum: 1 },\n    avgAmount: { $avg: '$amount' },\n    orders: { $push: { orderId: '$_id', amount: '$amount' } }\n  });"
+        },
+        {
+          name: "hint()",
+          category: "aggregate",
+          type: "method",
+          description: "Gợi ý MongoDB sử dụng index cụ thể cho aggregation.",
+          usage: "aggregate.hint(val)",
+          example: "const result = await User.aggregate([\n  { $match: { email: { $regex: /@gmail\\.com$/ } } },\n  { $sort: { createdAt: -1 } }\n]).hint({ email: 1 });"
+        },
+        {
+          name: "limit()",
+          category: "aggregate",
+          type: "method",
+          description: "Giới hạn số documents pass qua stage. Tương đương $limit stage.",
+          usage: "aggregate.limit(num)",
+          example: "const result = await User.aggregate()\n  .match({ active: true })\n  .sort({ createdAt: -1 })\n  .limit(10); // Lấy 10 users mới nhất"
+        },
+        {
+          name: "lookup()",
+          category: "aggregate",
+          type: "method",
+          description: "Join với collection khác. Tương đương $lookup stage.",
+          usage: "aggregate.lookup(options)",
+          example: "const result = await User.aggregate()\n  .lookup({\n    from: 'posts',\n    localField: '_id',\n    foreignField: 'authorId',\n    as: 'posts'\n  })\n  .lookup({\n    from: 'profiles',\n    let: { userId: '$_id' },\n    pipeline: [\n      { $match: { $expr: { $eq: ['$userId', '$$userId'] } } },\n      { $project: { bio: 1, avatar: 1 } }\n    ],\n    as: 'profile'\n  });"
+        },
+        {
+          name: "match()",
+          category: "aggregate",
+          type: "method",
+          description: "Filter documents theo criteria. Tương đương $match stage.",
+          usage: "aggregate.match(arg)",
+          example: "const result = await User.aggregate()\n  .match({\n    active: true,\n    age: { $gte: 18, $lt: 65 },\n    department: { $in: ['engineering', 'design'] }\n  });"
+        },
+        {
+          name: "model()",
+          category: "aggregate",
+          type: "method",
+          description: "Lấy Model instance mà aggregation này thuộc về.",
+          usage: "aggregate.model(model)",
+          example: "const agg = User.aggregate();\nconsole.log('Model name:', agg.model().modelName);\n// 'User'"
+        },
+        {
+          name: "near()",
+          category: "aggregate",
+          type: "method",
+          description: "Geospatial aggregation stage để tìm documents gần location. Tương đương $geoNear.",
+          usage: "aggregate.near(arg)",
+          example: "const result = await Location.aggregate()\n  .near({\n    near: { type: 'Point', coordinates: [0, 0] },\n    distanceField: 'distance',\n    maxDistance: 1000,\n    spherical: true\n  });"
+        },
+        {
+          name: "option()",
+          category: "aggregate",
+          type: "method",
+          description: "Thiết lập option cho aggregation.",
+          usage: "aggregate.option(options)",
+          example: "const result = await User.aggregate(pipeline)\n  .option({\n    allowDiskUse: true,\n    maxTimeMS: 30000,\n    hint: { email: 1 }\n  });"
+        },
+        {
+          name: "options",
+          category: "aggregate",
+          type: "property",
+          description: "Object chứa tất cả options của aggregation.",
+          usage: "aggregate.options",
+          example: "const agg = User.aggregate(pipeline).allowDiskUse(true);\nconsole.log('Options:', agg.options);\n// { allowDiskUse: true }"
+        },
+        {
+          name: "pipeline()",
+          category: "aggregate",
+          type: "method",
+          description: "Lấy hoặc thiết lập aggregation pipeline.",
+          usage: "aggregate.pipeline(pipeline)",
+          example: "const agg = User.aggregate();\nagg.pipeline([\n  { $match: { active: true } },\n  { $group: { _id: '$department', count: { $sum: 1 } } }\n]);\n\nconsole.log('Pipeline:', agg.pipeline());"
+        },
+        {
+          name: "project()",
+          category: "aggregate",
+          type: "method",
+          description: "Chỉ định fields cần include/exclude hoặc tạo computed fields. Tương đương $project.",
+          usage: "aggregate.project(arg)",
+          example: "const result = await User.aggregate()\n  .project({\n    name: 1,\n    email: 1,\n    fullName: { $concat: ['$firstName', ' ', '$lastName'] },\n    isAdult: { $gte: ['$age', 18] },\n    _id: 0\n  });"
+        },
+        {
+          name: "read()",
+          category: "aggregate",
+          type: "method",
+          description: "Thiết lập read preference cho aggregation.",
+          usage: "aggregate.read(pref, tags)",
+          example: "const result = await User.aggregate(pipeline)\n  .read('secondary', [{ region: 'us-west' }]);\n// Đọc từ secondary replica ở region us-west"
+        },
+        {
+          name: "readConcern()",
+          category: "aggregate",
+          type: "method",
+          description: "Thiết lập read concern cho aggregation.",
+          usage: "aggregate.readConcern(level)",
+          example: "const result = await User.aggregate(pipeline)\n  .readConcern('majority');\n// Đảm bảo đọc data đã được majority acknowledge"
+        },
+        {
+          name: "redact()",
+          category: "aggregate",
+          type: "method",
+          description: "Conditionally filter document content. Tương đương $redact stage.",
+          usage: "aggregate.redact(arg)",
+          example: "const result = await Document.aggregate()\n  .redact({\n    $cond: {\n      if: { $gte: ['$accessLevel', '$requiredLevel'] },\n      then: '$$KEEP',\n      else: '$$PRUNE'\n    }\n  });"
+        },
+        {
+          name: "replaceRoot()",
+          category: "aggregate",
+          type: "method",
+          description: "Thay thế document root với field khác. Tương đương $replaceRoot stage.",
+          usage: "aggregate.replaceRoot(newRoot)",
+          example: "const result = await User.aggregate()\n  .replaceRoot({ newRoot: '$profile' });\n// Document root giờ là profile object"
+        },
+        {
+          name: "sample()",
+          category: "aggregate",
+          type: "method",
+          description: "Lấy sample ngẫu nhiên documents. Tương đương $sample stage.",
+          usage: "aggregate.sample(size)",
+          example: "const randomUsers = await User.aggregate()\n  .match({ active: true })\n  .sample(10);\n// Lấy 10 active users ngẫu nhiên"
+        },
+        {
+          name: "search()",
+          category: "aggregate",
+          type: "method",
+          description: "MongoDB Atlas Search integration. Tương đương $search stage.",
+          usage: "aggregate.search(arg)",
+          example: "// Chỉ hoạt động với MongoDB Atlas\nconst result = await Article.aggregate()\n  .search({\n    index: 'article_index',\n    text: {\n      query: 'javascript mongodb',\n      path: ['title', 'content']\n    }\n  });"
+        },
+        {
+          name: "session()",
+          category: "aggregate",
+          type: "method",
+          description: "Thiết lập session cho aggregation (để sử dụng transactions).",
+          usage: "aggregate.session(session)",
+          example: "const session = await mongoose.startSession();\nconst result = await User.aggregate(pipeline)\n  .session(session);\n// Aggregation chạy trong session context"
+        },
+        {
+          name: "skip()",
+          category: "aggregate",
+          type: "method",
+          description: "Bỏ qua số documents đầu tiên. Tương đương $skip stage.",
+          usage: "aggregate.skip(num)",
+          example: "const result = await User.aggregate()\n  .match({ active: true })\n  .sort({ createdAt: -1 })\n  .skip(20)\n  .limit(10); // Pagination: page 3, 10 items per page"
+        },
+        {
+          name: "sort()",
+          category: "aggregate",
+          type: "method",
+          description: "Sắp xếp documents theo fields. Tương đương $sort stage.",
+          usage: "aggregate.sort(arg)",
+          example: "const result = await User.aggregate()\n  .match({ active: true })\n  .sort({ \n    department: 1,    // Tăng dần\n    salary: -1,       // Giảm dần\n    name: 1           // Tăng dần\n  });"
+        },
+        {
+          name: "sortByCount()",
+          category: "aggregate",
+          type: "method",
+          description: "Group theo field và sort theo count. Tương đương $sortByCount stage.",
+          usage: "aggregate.sortByCount(arg)",
+          example: "const result = await User.aggregate()\n  .sortByCount('$department');\n// [{ _id: 'engineering', count: 50 }, { _id: 'design', count: 30 }, ...]"
+        },
+        {
+          name: "then()",
+          category: "aggregate",
+          type: "method",
+          description: "Thêm success handler cho aggregation Promise.",
+          usage: "aggregate.then(onFulfilled, onRejected)",
+          example: "User.aggregate([\n  { $match: { active: true } },\n  { $group: { _id: '$department', count: { $sum: 1 } } }\n])\n.then(result => {\n  console.log('Department stats:', result);\n})\n.catch(err => {\n  console.error('Aggregation failed:', err);\n});"
+        },
+        {
+          name: "unionWith()",
+          category: "aggregate",
+          type: "method",
+          description: "Union kết quả với collection khác. Tương đương $unionWith stage. MongoDB 4.4+.",
+          usage: "aggregate.unionWith(options)",
+          example: "const result = await User.aggregate()\n  .match({ active: true })\n  .unionWith({\n    coll: 'admins',\n    pipeline: [\n      { $match: { role: 'admin' } },\n      { $addFields: { userType: 'admin' } }\n    ]\n  })\n  .addFields({ userType: { $ifNull: ['$userType', 'regular'] } });"
+        },
+        {
+          name: "unwind()",
+          category: "aggregate",
+          type: "method",
+          description: "Tách array field thành separate documents. Tương đương $unwind stage.",
+          usage: "aggregate.unwind(arg)",
+          example: "const result = await User.aggregate()\n  .unwind('$skills') // Mỗi skill thành 1 document riêng\n  .group({\n    _id: '$skills.name',\n    avgLevel: { $avg: '$skills.level' },\n    userCount: { $sum: 1 }\n  });\n\n// Hoặc với options\nconst result2 = await User.aggregate()\n  .unwind({\n    path: '$skills',\n    includeArrayIndex: 'skillIndex',\n    preserveNullAndEmptyArrays: true\n  });"
+        },
+        {
+          name: "[Symbol.asyncIterator]()",
+          category: "aggregate",
+          type: "method",
+          description: "Cho phép sử dụng for-await-of loop với aggregation cursor.",
+          usage: "for await (const doc of aggregate) { ... }",
+          example: "const aggregation = User.aggregate([\n  { $match: { active: true } },\n  { $project: { name: 1, email: 1 } }\n]);\n\nfor await (const user of aggregation) {\n  console.log('Processing user:', user.name);\n  // Xử lý từng user một cách memory-efficient\n}"
+        }
+      ],
+      // VirtualType API Data - Thêm vào object apiData trong HTML
+      virtualtype: [
+        {
+          name: "VirtualType()",
+          category: "virtualtype",
+          type: "constructor",
+          description: "Constructor để tạo VirtualType instance. Đại diện cho virtual field không được lưu trong database.",
+          usage: "new VirtualType(options, name)",
+          example: "const virtual = new mongoose.VirtualType({}, 'fullName');\n// Tạo virtual field mới"
+        },
+        {
+          name: "applyGetters()",
+          category: "virtualtype",
+          type: "method",
+          description: "Áp dụng tất cả getter functions để tính toán giá trị virtual field.",
+          usage: "virtualType.applyGetters(value, scope)",
+          example: "const fullNameVirtual = userSchema.virtual('fullName')\n  .get(function() {\n    return this.firstName + ' ' + this.lastName;\n  });\n\n// Internal: virtual sẽ gọi applyGetters khi truy cập\nconst result = fullNameVirtual.applyGetters(null, userDoc);"
+        },
+        {
+          name: "applySetters()",
+          category: "virtualtype",
+          type: "method",
+          description: "Áp dụng tất cả setter functions khi gán giá trị cho virtual field.",
+          usage: "virtualType.applySetters(value, scope)",
+          example: "const fullNameVirtual = userSchema.virtual('fullName')\n  .set(function(name) {\n    const parts = name.split(' ');\n    this.firstName = parts[0];\n    this.lastName = parts[1];\n  });\n\n// Internal: virtual sẽ gọi applySetters khi gán giá trị\nfullNameVirtual.applySetters('John Doe', userDoc);"
+        },
+        {
+          name: "get()",
+          category: "virtualtype",
+          type: "method",
+          description: "Định nghĩa getter function cho virtual field. Function này sẽ được gọi khi truy cập virtual.",
+          usage: "virtualType.get(fn)",
+          example: "userSchema.virtual('fullName')\n  .get(function() {\n    return `${this.firstName} ${this.lastName}`;\n  });\n\n// Sử dụng\nconst user = new User({ firstName: 'John', lastName: 'Doe' });\nconsole.log(user.fullName); // 'John Doe'"
+        },
+        {
+          name: "set()",
+          category: "virtualtype",
+          type: "method",
+          description: "Định nghĩa setter function cho virtual field. Function này sẽ được gọi khi gán giá trị.",
+          usage: "virtualType.set(fn)",
+          example: "userSchema.virtual('fullName')\n  .set(function(name) {\n    const parts = name.split(' ');\n    this.firstName = parts[0];\n    this.lastName = parts[1] || '';\n  });\n\n// Sử dụng\nconst user = new User();\nuser.fullName = 'John Doe';\nconsole.log(user.firstName); // 'John'\nconsole.log(user.lastName);  // 'Doe'"
+        }
+      ]
+    };
+
+    // Category information
+    const categoryInfo = {
+      all: {
+        title: "Tất cả API",
+        description: "Hiển thị tất cả API của Mongoose"
+      },
+      mongoose: {
+        title: "Mongoose Core",
+        description: "API chính của Mongoose - kết nối, cấu hình và quản lý global"
+      },
+      schema: {
+        title: "Schema API",
+        description: "API để định nghĩa cấu trúc document, validation và middleware"
+      },
+      connection: {
+        title: "Connection API",
+        description: "API quản lý kết nối tới MongoDB - mở/đóng connection, transactions, change streams"
+      },
+      document: {
+        title: "Document API",
+        description: "API để làm việc với document instances - validation, save, populate, modify tracking"
+      },
+      model: {
+        title: "Model API",
+        description: "API cho Model class - CRUD operations, queries, aggregation, indexing"
+      },
+      query: {
+        title: "Query API",
+        description: "API để xây dựng và thực thi MongoDB queries - filtering, sorting, pagination, geospatial"
+      }, aggregate: {
+        title: "Aggregate API",
+        description: "API cho MongoDB Aggregation Pipeline - group, lookup, project, facet, geospatial operations"
+      }, virtualtype: {
+        title: "VirtualType API",
+        description: "API cho Virtual Fields - computed properties không lưu trong database, getters/setters"
+      }
+    };
+
+    let currentCategory = 'all';
+    let currentType = 'all';
+    let allData = [];
+
+    // Flatten all data
+    function flattenData() {
+      allData = [];
+      Object.keys(apiData).forEach(category => {
+        apiData[category].forEach(item => {
+          allData.push({
+            ...item,
+            categoryName: category
+          });
+        });
+      });
+    }
+
+    // Update statistics
+    function updateStats() {
+      const stats = {
+        total: allData.length,
+        constructors: allData.filter(item => item.type === 'constructor').length,
+        methods: allData.filter(item => item.type === 'method').length,
+        properties: allData.filter(item => item.type === 'property').length,
+        statics: allData.filter(item => item.type === 'static').length
+      };
+
+      const statsContainer = document.getElementById('statsContainer');
+      statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <span class="stat-number">${stats.total}</span>
+                    <div class="stat-label">Tổng API</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${stats.constructors}</span>
+                    <div class="stat-label">Constructors</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${stats.methods}</span>
+                    <div class="stat-label">Methods</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${stats.properties}</span>
+                    <div class="stat-label">Properties</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">${stats.statics}</span>
+                    <div class="stat-label">Static</div>
+                </div>
+            `;
+    }
+
+    // Create filter buttons
+    function createFilters() {
+      // Category filters
+      const categoryFilters = document.getElementById('categoryFilters');
+      const categories = ['all', ...Object.keys(apiData)];
+
+      categoryFilters.innerHTML = categories.map(cat =>
+        `<button class="filter-btn category-btn ${cat === 'all' ? 'active' : ''}" 
+                         onclick="filterByCategory('${cat}')">${categoryInfo[cat]?.title || cat}</button>`
+      ).join('');
+
+      // Type filters
+      const typeFilters = document.getElementById('typeFilters');
+      const types = ['all', 'constructor', 'method', 'property', 'static'];
+
+      typeFilters.innerHTML = types.map(type =>
+        `<button class="filter-btn ${type === 'all' ? 'active' : ''}" 
+                         onclick="filterByType('${type}')">${type === 'all' ? 'Tất cả' : type}</button>`
+      ).join('');
+    }
+
+    // Filter by category
+    function filterByCategory(category) {
+      currentCategory = category;
+
+      // Update active button
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update category info
+      const info = categoryInfo[category];
+      document.getElementById('categoryTitle').textContent = info.title;
+      document.getElementById('categoryDescription').textContent = info.description;
+
+      populateTable();
+    }
+
+    // Filter by type
+    function filterByType(type) {
+      currentType = type;
+
+      // Update active button
+      document.querySelectorAll('#typeFilters .filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      populateTable();
+    }
+
+    // Populate table with filtered data
+    function populateTable() {
+      const tbody = document.getElementById('tableBody');
+
+      let filteredData = allData;
+
+      // Filter by category
+      if (currentCategory !== 'all') {
+        filteredData = filteredData.filter(item => item.categoryName === currentCategory);
+      }
+
+      // Filter by type
+      if (currentType !== 'all') {
+        filteredData = filteredData.filter(item => item.type === currentType);
+      }
+
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">😕 Không tìm thấy API nào</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = '';
+
+      filteredData.forEach(item => {
+        const row = document.createElement('tr');
+
+        const categoryClass = `category-${item.categoryName}`;
+        const typeClass = `type-${item.type}`;
+
+        row.innerHTML = `
+                    <td><span class="api-name">${item.name}</span></td>
+                    <td><span class="category-badge ${categoryClass}">${item.categoryName}</span></td>
+                    <td><span class="type-badge ${typeClass}">${item.type}</span></td>
+                    <td class="description">${item.description}</td>
+                    <td><div class="code-block">${item.example}</div></td>
+                `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    // Search functionality
+    function filterTable(searchTerm) {
+      const rows = document.querySelectorAll('#tableBody tr');
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm.toLowerCase())) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Export to Excel
+    function exportToExcel() {
+      // Prepare data for Excel
+      const excelData = allData.map(item => ({
+        'Tên API': item.name,
+        'Danh mục': item.categoryName,
+        'Loại': item.type,
+        'Mô tả': item.description,
+        'Cách sử dụng': item.usage,
+        'Ví dụ': item.example
+      }));
+
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+      // Set column widths
+      const colWidths = [
+        { wch: 35 }, // Tên API
+        { wch: 15 }, // Danh mục
+        { wch: 15 }, // Loại
+        { wch: 60 }, // Mô tả
+        { wch: 50 }, // Cách sử dụng
+        { wch: 80 }  // Ví dụ
+      ];
+      worksheet['!cols'] = colWidths;
+
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Mongoose Complete API");
+
+      // Create and download file
+      XLSX.writeFile(workbook, 'Mongoose_Complete_API_Reference.xlsx');
+
+      // Show success message
+      alert('✅ File Excel đã được tạo và tải xuống thành công!\n📁 Tên file: Mongoose_Complete_API_Reference.xlsx');
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      flattenData();
+      updateStats();
+      createFilters();
+      populateTable();
+    });
+  </script>
+</body>
+
+</html>
