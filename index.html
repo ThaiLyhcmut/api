@@ -403,6 +403,7 @@
   <script>
     // Data structure for different API categories
     const apiData = {
+      // Complete Mongoose Core API Data - Thay thế hoàn toàn category "mongoose" trong HTML
       mongoose: [
         {
           name: "Mongoose()",
@@ -413,7 +414,207 @@
           example: "const customMongoose = new mongoose.Mongoose();\ncustomMongoose.connect('mongodb://localhost/mydb');"
         },
         {
-          name: "connect()",
+          name: "Mongoose.prototype.Aggregate()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor để tạo aggregation pipeline. Được sử dụng để thực hiện các truy vấn phức tạp và xử lý dữ liệu.",
+          usage: "new mongoose.Aggregate([pipeline])",
+          example: "const agg = new mongoose.Aggregate();\nagg.match({age: {$gte: 18}}).group({_id: '$department', count: {$sum: 1}});"
+        },
+        {
+          name: "Mongoose.prototype.CastError()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho lỗi cast. Được ném khi Mongoose không thể chuyển đổi một giá trị sang kiểu dữ liệu mong muốn.",
+          usage: "new mongoose.CastError(type, value, path, reason)",
+          example: "throw new mongoose.CastError('ObjectId', 'invalid_id', '_id');"
+        },
+        {
+          name: "Mongoose.prototype.Collection()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho MongoDB collection. Đại diện cho một collection trong MongoDB.",
+          usage: "new mongoose.Collection(name, conn, options)",
+          example: "const collection = new mongoose.Collection('users', connection);"
+        },
+        {
+          name: "Mongoose.prototype.Connection()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho kết nối database. Quản lý kết nối tới MongoDB.",
+          usage: "new mongoose.Connection(base)",
+          example: "const conn = new mongoose.Connection(mongoose);"
+        },
+        {
+          name: "Mongoose.prototype.ConnectionStates",
+          category: "mongoose",
+          type: "property",
+          description: "Object chứa các trạng thái kết nối: disconnected (0), connected (1), connecting (2), disconnecting (3).",
+          usage: "mongoose.ConnectionStates.connected",
+          example: "if (mongoose.connection.readyState === mongoose.ConnectionStates.connected) {\n  console.log('Đã kết nối');\n}"
+        },
+        {
+          name: "Mongoose.prototype.Date",
+          category: "mongoose",
+          type: "property",
+          description: "Schema type cho kiểu Date. Được sử dụng để định nghĩa field có kiểu ngày tháng.",
+          usage: "mongoose.Schema.Types.Date hoặc mongoose.Date",
+          example: "const schema = new mongoose.Schema({ createdAt: mongoose.Date });"
+        },
+        {
+          name: "Mongoose.prototype.Decimal128",
+          category: "mongoose",
+          type: "property",
+          description: "Schema type cho kiểu Decimal128. Được sử dụng cho các số thập phân có độ chính xác cao.",
+          usage: "mongoose.Schema.Types.Decimal128",
+          example: "const schema = new mongoose.Schema({ price: mongoose.Decimal128 });"
+        },
+        {
+          name: "Mongoose.prototype.Document()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho document. Base class cho tất cả document instances.",
+          usage: "new mongoose.Document(obj, schema, options)",
+          example: "const doc = new mongoose.Document({ name: 'John' }, userSchema);"
+        },
+        {
+          name: "Mongoose.prototype.DocumentProvider()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho document provider. Quản lý việc tạo document instances.",
+          usage: "new mongoose.DocumentProvider()",
+          example: "const provider = new mongoose.DocumentProvider();"
+        },
+        {
+          name: "Mongoose.prototype.Error()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Base constructor cho tất cả lỗi Mongoose. Cha của các loại lỗi khác.",
+          usage: "new mongoose.Error(message)",
+          example: "throw new mongoose.Error('Custom error message');"
+        },
+        {
+          name: "Mongoose.prototype.Mixed",
+          category: "mongoose",
+          type: "property",
+          description: "Schema type cho kiểu Mixed. Cho phép lưu trữ bất kỳ kiểu dữ liệu nào.",
+          usage: "mongoose.Schema.Types.Mixed",
+          example: "const schema = new mongoose.Schema({ data: mongoose.Mixed });"
+        },
+        {
+          name: "Mongoose.prototype.Model()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho Model. Base class cho tất cả models, cung cấp interface để tương tác với collection.",
+          usage: "mongoose.model(name, schema)",
+          example: "const User = mongoose.model('User', userSchema);"
+        },
+        {
+          name: "Mongoose.prototype.Mongoose()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor chính của Mongoose class. Tạo instance Mongoose mới.",
+          usage: "new mongoose.Mongoose()",
+          example: "const mongooseInstance = new mongoose.Mongoose();"
+        },
+        {
+          name: "Mongoose.prototype.Number",
+          category: "mongoose",
+          type: "property",
+          description: "Schema type cho kiểu Number. Được sử dụng để định nghĩa field số.",
+          usage: "mongoose.Schema.Types.Number",
+          example: "const schema = new mongoose.Schema({ age: mongoose.Number });"
+        },
+        {
+          name: "Mongoose.prototype.ObjectId",
+          category: "mongoose",
+          type: "property",
+          description: "Schema type cho kiểu ObjectId. Được sử dụng cho ID documents và references.",
+          usage: "mongoose.Schema.Types.ObjectId",
+          example: "const schema = new mongoose.Schema({ userId: mongoose.ObjectId });"
+        },
+        {
+          name: "Mongoose.prototype.Promise",
+          category: "mongoose",
+          type: "property",
+          description: "Promise constructor được sử dụng bởi Mongoose. Mặc định là native ES6 Promise.",
+          usage: "mongoose.Promise = CustomPromise",
+          example: "mongoose.Promise = require('bluebird');\n// Sử dụng Bluebird promises"
+        },
+        {
+          name: "Mongoose.prototype.PromiseProvider()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho promise provider. Quản lý Promise implementation.",
+          usage: "new mongoose.PromiseProvider()",
+          example: "const provider = new mongoose.PromiseProvider();"
+        },
+        {
+          name: "Mongoose.prototype.Query()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho Query. Được sử dụng để xây dựng và thực thi các truy vấn database.",
+          usage: "new mongoose.Query(options, model, conditions)",
+          example: "const query = new mongoose.Query({}, Model, { name: 'John' });"
+        },
+        {
+          name: "Mongoose.prototype.STATES",
+          category: "mongoose",
+          type: "property",
+          description: "Alias cho ConnectionStates. Chứa các hằng số trạng thái kết nối.",
+          usage: "mongoose.STATES.connected",
+          example: "console.log('Current state:', mongoose.connection.readyState === mongoose.STATES.connected);"
+        },
+        {
+          name: "Mongoose.prototype.Schema()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho Schema. Định nghĩa cấu trúc document, validation rules và middleware.",
+          usage: "new mongoose.Schema(definition, options)",
+          example: "const userSchema = new mongoose.Schema({ name: String, age: Number });"
+        },
+        {
+          name: "Mongoose.prototype.SchemaType()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Base constructor cho tất cả schema types. Cha của String, Number, Date, etc.",
+          usage: "new mongoose.SchemaType(path, options, instance)",
+          example: "class CustomType extends mongoose.SchemaType {\n  // custom implementation\n}"
+        },
+        {
+          name: "Mongoose.prototype.SchemaTypeOptions()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho schema type options. Quản lý các tùy chọn cho schema types.",
+          usage: "new mongoose.SchemaTypeOptions()",
+          example: "const options = new mongoose.SchemaTypeOptions();"
+        },
+        {
+          name: "Mongoose.prototype.SchemaTypes",
+          category: "mongoose",
+          type: "property",
+          description: "Object chứa tất cả các built-in schema types như String, Number, Date, Boolean, etc.",
+          usage: "mongoose.SchemaTypes.String",
+          example: "const schema = new mongoose.Schema({ name: mongoose.SchemaTypes.String });"
+        },
+        {
+          name: "Mongoose.prototype.Types",
+          category: "mongoose",
+          type: "property",
+          description: "Object chứa các utility types như ObjectId, Decimal128, Buffer, etc.",
+          usage: "mongoose.Types.ObjectId",
+          example: "const id = new mongoose.Types.ObjectId();\nconsole.log(mongoose.Types.ObjectId.isValid(id));"
+        },
+        {
+          name: "Mongoose.prototype.VirtualType()",
+          category: "mongoose",
+          type: "constructor",
+          description: "Constructor cho virtual fields. Tạo các field ảo không được lưu trong database.",
+          usage: "schema.virtual(name)",
+          example: "userSchema.virtual('fullName').get(function() {\n  return this.firstName + ' ' + this.lastName;\n});"
+        },
+        {
+          name: "Mongoose.prototype.connect()",
           category: "mongoose",
           type: "method",
           description: "Kết nối tới MongoDB database. Trả về Promise.",
@@ -421,7 +622,79 @@
           example: "mongoose.connect('mongodb://localhost:27017/myapp', {\n  useNewUrlParser: true\n});"
         },
         {
-          name: "model()",
+          name: "Mongoose.prototype.connection",
+          category: "mongoose",
+          type: "property",
+          description: "Default connection object. Đại diện cho kết nối mặc định tới MongoDB.",
+          usage: "mongoose.connection",
+          example: "mongoose.connection.on('connected', () => \n  console.log('Connected to MongoDB')\n);"
+        },
+        {
+          name: "Mongoose.prototype.connections",
+          category: "mongoose",
+          type: "property",
+          description: "Array chứa tất cả các connection objects. Bao gồm cả default connection.",
+          usage: "mongoose.connections",
+          example: "console.log('Total connections:', mongoose.connections.length);"
+        },
+        {
+          name: "Mongoose.prototype.createConnection()",
+          category: "mongoose",
+          type: "method",
+          description: "Tạo một kết nối mới tới database. Không ảnh hưởng đến default connection.",
+          usage: "mongoose.createConnection(uri, options)",
+          example: "const secondaryDb = mongoose.createConnection('mongodb://localhost:27017/secondary');"
+        },
+        {
+          name: "Mongoose.prototype.deleteModel()",
+          category: "mongoose",
+          type: "method",
+          description: "Xóa model từ Mongoose registry. Hữu ích khi testing hoặc hot reloading.",
+          usage: "mongoose.deleteModel(name)",
+          example: "mongoose.deleteModel('User');\n// Xóa model User"
+        },
+        {
+          name: "Mongoose.prototype.disconnect()",
+          category: "mongoose",
+          type: "method",
+          description: "Ngắt kết nối khỏi MongoDB. Đóng tất cả connections.",
+          usage: "mongoose.disconnect(callback)",
+          example: "await mongoose.disconnect();\nconsole.log('Disconnected from MongoDB');"
+        },
+        {
+          name: "Mongoose.prototype.driver",
+          category: "mongoose",
+          type: "property",
+          description: "Reference tới MongoDB driver object. Cho phép truy cập low-level driver features.",
+          usage: "mongoose.driver",
+          example: "console.log('Driver version:', mongoose.driver.version);"
+        },
+        {
+          name: "Mongoose.prototype.get()",
+          category: "mongoose",
+          type: "method",
+          description: "Lấy giá trị global option. Đọc các thiết lập cấu hình của Mongoose.",
+          usage: "mongoose.get(key)",
+          example: "const strictMode = mongoose.get('strict');\nconsole.log('Strict mode:', strictMode);"
+        },
+        {
+          name: "Mongoose.prototype.isObjectIdOrHexString()",
+          category: "mongoose",
+          type: "method",
+          description: "Kiểm tra xem một giá trị có phải là ObjectId hoặc hex string hợp lệ không.",
+          usage: "mongoose.isObjectIdOrHexString(value)",
+          example: "console.log(mongoose.isObjectIdOrHexString('507f1f77bcf86cd799439011'));\n// true"
+        },
+        {
+          name: "Mongoose.prototype.isValidObjectId()",
+          category: "mongoose",
+          type: "method",
+          description: "Kiểm tra xem một giá trị có phải là ObjectId hợp lệ không. Tương tự isObjectIdOrHexString.",
+          usage: "mongoose.isValidObjectId(value)",
+          example: "console.log(mongoose.isValidObjectId('invalid'));\n// false"
+        },
+        {
+          name: "Mongoose.prototype.model()",
           category: "mongoose",
           type: "method",
           description: "Định nghĩa model hoặc lấy model đã tồn tại. Central method để tạo models.",
@@ -429,20 +702,124 @@
           example: "const User = mongoose.model('User', userSchema);\n// Tạo model mới"
         },
         {
-          name: "Schema()",
+          name: "Mongoose.prototype.modelNames()",
           category: "mongoose",
-          type: "constructor",
-          description: "Constructor cho Schema. Định nghĩa cấu trúc document, validation rules và middleware.",
-          usage: "new mongoose.Schema(definition, options)",
-          example: "const userSchema = new mongoose.Schema({\n  name: String,\n  age: Number\n});"
+          type: "method",
+          description: "Trả về array chứa tên của tất cả models đã đăng ký.",
+          usage: "mongoose.modelNames()",
+          example: "console.log('Registered models:', mongoose.modelNames());\n// ['User', 'Post']"
         },
         {
-          name: "connection",
+          name: "Mongoose.prototype.mongo",
           category: "mongoose",
           type: "property",
-          description: "Default connection object. Đại diện cho kết nối mặc định tới MongoDB.",
-          usage: "mongoose.connection",
-          example: "mongoose.connection.on('connected', () => \n  console.log('Connected to MongoDB')\n);"
+          description: "Reference tới MongoDB native driver. Cho phép sử dụng native MongoDB features.",
+          usage: "mongoose.mongo",
+          example: "const ObjectId = mongoose.mongo.ObjectId;\nconst id = new ObjectId();"
+        },
+        {
+          name: "Mongoose.prototype.mquery",
+          category: "mongoose",
+          type: "property",
+          description: "Reference tới mquery library. Query builder được sử dụng bởi Mongoose.",
+          usage: "mongoose.mquery",
+          example: "const query = new mongoose.mquery();\nquery.find({ name: 'John' });"
+        },
+        {
+          name: "Mongoose.prototype.now()",
+          category: "mongoose",
+          type: "method",
+          description: "Trả về current Date. Function để lấy thời gian hiện tại, có thể được override.",
+          usage: "mongoose.now()",
+          example: "const currentTime = mongoose.now();\nconsole.log('Current time:', currentTime);"
+        },
+        {
+          name: "Mongoose.prototype.overwriteMiddlewareResult()",
+          category: "mongoose",
+          type: "method",
+          description: "Ghi đè kết quả middleware. Cho phép thay đổi kết quả từ middleware functions.",
+          usage: "mongoose.overwriteMiddlewareResult(newResult)",
+          example: "mongoose.overwriteMiddlewareResult(modifiedDocument);"
+        },
+        {
+          name: "Mongoose.prototype.plugin()",
+          category: "mongoose",
+          type: "method",
+          description: "Áp dụng plugin cho tất cả schemas. Global plugin application.",
+          usage: "mongoose.plugin(pluginFunction, options)",
+          example: "mongoose.plugin(require('mongoose-timestamp'));\n// Thêm timestamps cho tất cả schemas"
+        },
+        {
+          name: "Mongoose.prototype.pluralize()",
+          category: "mongoose",
+          type: "method",
+          description: "Function để chuyển đổi tên model sang dạng số nhiều cho collection name.",
+          usage: "mongoose.pluralize(fn)",
+          example: "mongoose.pluralize(null);\n// Tắt pluralization tự động"
+        },
+        {
+          name: "Mongoose.prototype.sanitizeFilter()",
+          category: "mongoose",
+          type: "method",
+          description: "Làm sạch filter object để tránh NoSQL injection attacks.",
+          usage: "mongoose.sanitizeFilter(filter)",
+          example: "const clean = mongoose.sanitizeFilter({ name: { $ne: null } });"
+        },
+        {
+          name: "Mongoose.prototype.set()",
+          category: "mongoose",
+          type: "method",
+          description: "Thiết lập global option cho Mongoose. Cấu hình các thiết lập toàn cục.",
+          usage: "mongoose.set(key, value)",
+          example: "mongoose.set('strictQuery', false);\n// Tắt strict mode cho queries"
+        },
+        {
+          name: "Mongoose.prototype.setDriver()",
+          category: "mongoose",
+          type: "method",
+          description: "Thiết lập MongoDB driver tùy chỉnh. Cho phép sử dụng driver khác.",
+          usage: "mongoose.setDriver(driver)",
+          example: "mongoose.setDriver(customDriver);"
+        },
+        {
+          name: "Mongoose.prototype.skipMiddlewareFunction()",
+          category: "mongoose",
+          type: "method",
+          description: "Tạo function để bỏ qua middleware. Hữu ích để bypass middleware trong một số trường hợp.",
+          usage: "mongoose.skipMiddlewareFunction(fn)",
+          example: "const skipFn = mongoose.skipMiddlewareFunction(myFunction);"
+        },
+        {
+          name: "Mongoose.prototype.startSession()",
+          category: "mongoose",
+          type: "method",
+          description: "Bắt đầu một client session mới. Hỗ trợ MongoDB transactions.",
+          usage: "mongoose.startSession(options)",
+          example: "const session = await mongoose.startSession();\nawait session.startTransaction();"
+        },
+        {
+          name: "Mongoose.prototype.syncIndexes()",
+          category: "mongoose",
+          type: "method",
+          description: "Đồng bộ hóa indexes cho tất cả models. Tạo/xóa indexes theo schema definition.",
+          usage: "mongoose.syncIndexes(options)",
+          example: "await mongoose.syncIndexes();\nconsole.log('Indexes synchronized');"
+        },
+        {
+          name: "Mongoose.prototype.trusted()",
+          category: "mongoose",
+          type: "method",
+          description: "Đánh dấu một object là 'trusted' để bỏ qua một số validations.",
+          usage: "mongoose.trusted(obj)",
+          example: "const trustedData = mongoose.trusted({ name: 'John', age: 30 });"
+        },
+        {
+          name: "Mongoose.prototype.version",
+          category: "mongoose",
+          type: "property",
+          description: "Version string của Mongoose package hiện tại.",
+          usage: "mongoose.version",
+          example: "console.log('Mongoose version:', mongoose.version);\n// '7.x.x'"
         }
       ],
       schema: [
