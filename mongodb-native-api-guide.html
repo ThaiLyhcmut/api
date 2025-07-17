@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB Native API Guide - Hướng Dẫn Chi Tiết</title>
+    <style>
+        :root {
+            --primary-color: #4db33d;
+            --secondary-color: #3d4f58;
+            --accent-color: #f5f5f5;
+            --text-color: #333;
+            --code-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --hover-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 3rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav {
+            background-color: var(--accent-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+
+        nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        main {
+            padding: 3rem 0;
+        }
+
+        section {
+            margin-bottom: 4rem;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+        }
+
+        .method-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .method-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .method-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .method-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-right: 1rem;
+        }
+
+        .method-purpose {
+            color: #666;
+            font-style: italic;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', 'Andale Mono', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 1rem;
+            border-left: 4px solid #ffc107;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .info-box {
+            background-color: #e3f2fd;
+            padding: 1rem;
+            border-left: 4px solid #2196f3;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background-color: #ffebee;
+            padding: 1rem;
+            border-left: 4px solid #f44336;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>MongoDB Native API Guide</h1>
+            <p>Hướng dẫn sử dụng MongoDB Native API (Không Schema)</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#mongoose-core">Mongoose Core</a></li>
+                <li><a href="#connection">Connection</a></li>
+                <li><a href="#collection-operations">Collection Operations</a></li>
+                <li><a href="#query-operations">Query Operations</a></li>
+                <li><a href="#aggregate-operations">Aggregate Operations</a></li>
+                <li><a href="#examples">Ví Dụ Thực Tế</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="mongoose-core">
+            <h2>Mongoose Core</h2>
+            
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Mongoose()</span>
+                    <span class="method-purpose">Tạo instance mới của Mongoose với các thiết lập riêng biệt</span>
+                </div>
+                <pre><code>const mongoose = require('mongoose');
+const customMongoose = new mongoose.Mongoose();
+customMongoose.connect('mongodb://localhost/mydb');</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">connect()</span>
+                    <span class="method-purpose">Kết nối tới MongoDB database</span>
+                </div>
+                <pre><code>mongoose.connect('mongodb://localhost:27017/myapp', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">disconnect()</span>
+                    <span class="method-purpose">Ngắt kết nối khỏi MongoDB</span>
+                </div>
+                <pre><code>await mongoose.disconnect();
+console.log('Disconnected from MongoDB');</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">createConnection()</span>
+                    <span class="method-purpose">Tạo kết nối mới không ảnh hưởng đến default connection</span>
+                </div>
+                <pre><code>const secondaryDb = mongoose.createConnection('mongodb://localhost:27017/secondary');</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">isValidObjectId()</span>
+                    <span class="method-purpose">Kiểm tra xem giá trị có phải là ObjectId hợp lệ không</span>
+                </div>
+                <pre><code>console.log(mongoose.isValidObjectId('507f1f77bcf86cd799439011')); // true
+console.log(mongoose.isValidObjectId('invalid')); // false</code></pre>
+            </div>
+        </section>
+
+        <section id="connection">
+            <h2>Connection</h2>
+            
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">close()</span>
+                    <span class="method-purpose">Đóng kết nối và giải phóng tài nguyên</span>
+                </div>
+                <pre><code>await mongoose.connection.close();
+console.log('Connection closed');</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">createCollection()</span>
+                    <span class="method-purpose">Tạo collection mới với options cụ thể</span>
+                </div>
+                <pre><code>await mongoose.connection.createCollection('logs', {
+  capped: true,
+  size: 1024 * 1024
+});</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">dropCollection()</span>
+                    <span class="method-purpose">Xóa collection khỏi database</span>
+                </div>
+                <pre><code>await mongoose.connection.dropCollection('temp_data');
+console.log('Collection dropped');</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">collection()</span>
+                    <span class="method-purpose">Lấy collection instance để truy cập trực tiếp</span>
+                </div>
+                <pre><code>const users = mongoose.connection.collection('users');
+const count = await users.countDocuments();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">watch()</span>
+                    <span class="method-purpose">Theo dõi thay đổi trên toàn database (MongoDB 3.6+)</span>
+                </div>
+                <pre><code>const changeStream = mongoose.connection.watch();
+changeStream.on('change', (change) => {
+  console.log('Database changed:', change);
+});</code></pre>
+            </div>
+        </section>
+
+        <section id="collection-operations">
+            <h2>Collection Operations</h2>
+            
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">insertOne()</span>
+                    <span class="method-purpose">Thêm một document vào collection</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.insertOne({
+  name: 'John Doe',
+  email: 'john@example.com',
+  age: 30
+});
+console.log('Inserted ID:', result.insertedId);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">insertMany()</span>
+                    <span class="method-purpose">Thêm nhiều documents cùng lúc</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.insertMany([
+  { name: 'John', age: 30 },
+  { name: 'Jane', age: 25 }
+]);
+console.log('Inserted count:', result.insertedCount);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">findOne()</span>
+                    <span class="method-purpose">Tìm một document đầu tiên match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const user = await collection.findOne({ email: 'john@example.com' });
+console.log('Found user:', user);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">find()</span>
+                    <span class="method-purpose">Tìm nhiều documents theo điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+
+// Tìm tất cả users active
+const users = await collection.find({ active: true }).toArray();
+
+// Với projection và sort
+const users2 = await collection.find({ age: { $gte: 18 } })
+  .project({ name: 1, email: 1 })
+  .sort({ name: 1 })
+  .limit(10)
+  .toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">updateOne()</span>
+                    <span class="method-purpose">Update một document đầu tiên match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.updateOne(
+  { name: 'John' },
+  { $set: { age: 31 }, $inc: { loginCount: 1 } }
+);
+console.log('Modified count:', result.modifiedCount);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">updateMany()</span>
+                    <span class="method-purpose">Update nhiều documents match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.updateMany(
+  { active: false },
+  { $set: { status: 'inactive' } }
+);
+console.log('Modified count:', result.modifiedCount);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">deleteOne()</span>
+                    <span class="method-purpose">Xóa một document đầu tiên match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.deleteOne({ name: 'John' });
+console.log('Deleted count:', result.deletedCount);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">deleteMany()</span>
+                    <span class="method-purpose">Xóa nhiều documents match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.deleteMany({ active: false });
+console.log('Deleted count:', result.deletedCount);</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">countDocuments()</span>
+                    <span class="method-purpose">Đếm số documents match điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const activeUsers = await collection.countDocuments({ active: true });
+const totalUsers = await collection.countDocuments();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">bulkWrite()</span>
+                    <span class="method-purpose">Thực hiện nhiều write operations cùng lúc</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+await collection.bulkWrite([
+  { insertOne: { document: { name: 'John', age: 30 } } },
+  { updateOne: { filter: { name: 'Jane' }, update: { $set: { age: 25 } } } },
+  { deleteOne: { filter: { name: 'Bob' } } }
+]);</code></pre>
+            </div>
+        </section>
+
+        <section id="query-operations">
+            <h2>Query Operations</h2>
+            
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">$where()</span>
+                    <span class="method-purpose">Sử dụng JavaScript expression trong query</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const users = await collection.find({ $where: 'this.age > 18' }).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Comparison Operators</span>
+                    <span class="method-purpose">So sánh giá trị với các operators</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+
+// Greater than ($gt), Less than ($lt)
+const youngUsers = await collection.find({ age: { $lt: 25 } }).toArray();
+const adultUsers = await collection.find({ age: { $gte: 18, $lte: 65 } }).toArray();
+
+// Not equal ($ne)
+const activeUsers = await collection.find({ status: { $ne: 'deleted' } }).toArray();
+
+// In array ($in), Not in array ($nin)
+const users = await collection.find({ status: { $in: ['active', 'pending'] } }).toArray();
+const validUsers = await collection.find({ status: { $nin: ['deleted', 'banned'] } }).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Logical Operators</span>
+                    <span class="method-purpose">Kết hợp nhiều điều kiện</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+
+// AND ($and)
+const users = await collection.find({
+  $and: [
+    { age: { $gte: 18 } },
+    { active: true }
+  ]
+}).toArray();
+
+// OR ($or)
+const users2 = await collection.find({
+  $or: [
+    { name: 'John' },
+    { email: 'john@example.com' }
+  ]
+}).toArray();
+
+// NOR ($nor)
+const users3 = await collection.find({
+  $nor: [
+    { age: { $lt: 18 } },
+    { status: 'inactive' }
+  ]
+}).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Array Operations</span>
+                    <span class="method-purpose">Thao tác với array fields</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+
+// All values must be in array ($all)
+const users = await collection.find({ 
+  tags: { $all: ['javascript', 'nodejs'] } 
+}).toArray();
+
+// Array size ($size)
+const users2 = await collection.find({ 
+  tags: { $size: 3 } 
+}).toArray();
+
+// Element match ($elemMatch)
+const users3 = await collection.find({
+  skills: { $elemMatch: { name: 'JavaScript', level: { $gte: 5 } } }
+}).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Text Search</span>
+                    <span class="method-purpose">Tìm kiếm text trong documents</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+
+// Regex search
+const users = await collection.find({ 
+  name: { $regex: /^John/i } 
+}).toArray();
+
+// Text search (cần text index)
+const users2 = await collection.find({ 
+  $text: { $search: 'javascript developer' } 
+}).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">Cursor Operations</span>
+                    <span class="method-purpose">Iterate qua kết quả lớn hiệu quả</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const cursor = collection.find({ active: true });
+
+// Iterate với forEach
+await cursor.forEach(doc => {
+  console.log(doc.name);
+});
+
+// Iterate với next()
+const cursor2 = collection.find({ active: true });
+let doc;
+while ((doc = await cursor2.next()) !== null) {
+  console.log(doc.name);
+}</code></pre>
+            </div>
+        </section>
+
+        <section id="aggregate-operations">
+            <h2>Aggregate Operations</h2>
+            
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">match()</span>
+                    <span class="method-purpose">Filter documents theo criteria</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $match: {
+    active: true,
+    age: { $gte: 18, $lt: 65 },
+    department: { $in: ['engineering', 'design'] }
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">group()</span>
+                    <span class="method-purpose">Nhóm documents và tính toán</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('orders');
+const result = await collection.aggregate([
+  { $group: {
+    _id: '$customerId',
+    totalAmount: { $sum: '$amount' },
+    orderCount: { $sum: 1 },
+    avgAmount: { $avg: '$amount' },
+    orders: { $push: { orderId: '$_id', amount: '$amount' } }
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">project()</span>
+                    <span class="method-purpose">Chỉ định fields hoặc tạo computed fields</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $project: {
+    name: 1,
+    email: 1,
+    fullName: { $concat: ['$firstName', ' ', '$lastName'] },
+    isAdult: { $gte: ['$age', 18] },
+    _id: 0
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">lookup()</span>
+                    <span class="method-purpose">Join với collection khác</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $lookup: {
+    from: 'posts',
+    localField: '_id',
+    foreignField: 'authorId',
+    as: 'posts'
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">unwind()</span>
+                    <span class="method-purpose">Tách array field thành separate documents</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $unwind: '$skills' },
+  { $group: {
+    _id: '$skills.name',
+    avgLevel: { $avg: '$skills.level' },
+    userCount: { $sum: 1 }
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">sort() và limit()</span>
+                    <span class="method-purpose">Sắp xếp và giới hạn kết quả</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $match: { active: true } },
+  { $sort: { createdAt: -1 } },
+  { $limit: 10 }
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">addFields()</span>
+                    <span class="method-purpose">Thêm fields mới vào documents</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $addFields: {
+    fullName: { $concat: ['$firstName', ' ', '$lastName'] },
+    isAdult: { $gte: ['$age', 18] }
+  }}
+]).toArray();</code></pre>
+            </div>
+
+            <div class="method-card">
+                <div class="method-header">
+                    <span class="method-name">count()</span>
+                    <span class="method-purpose">Đếm documents trong pipeline</span>
+                </div>
+                <pre><code>const collection = mongoose.connection.collection('users');
+const result = await collection.aggregate([
+  { $match: { active: true } },
+  { $count: 'activeUsers' }
+]).toArray();
+// Kết quả: [{ activeUsers: 150 }]</code></pre>
+            </div>
+        </section>
+
+        <section id="examples">
+            <h2>Ví Dụ Thực Tế</h2>
+            
+            <h3>1. Kết nối và khởi tạo</h3>
+            <pre><code>const mongoose = require('mongoose');
+
+// Kết nối database
+await mongoose.connect('mongodb://localhost:27017/myapp');
+
+// Lấy collection
+const users = mongoose.connection.collection('users');
+const posts = mongoose.connection.collection('posts');</code></pre>
+
+            <h3>2. CRUD Operations</h3>
+            <pre><code>// Create
+const newUser = await users.insertOne({
+  name: 'John Doe',
+  email: 'john@example.com',
+  age: 30,
+  active: true,
+  createdAt: new Date()
+});
+
+// Read
+const user = await users.findOne({ email: 'john@example.com' });
+const activeUsers = await users.find({ active: true })
+  .sort({ createdAt: -1 })
+  .limit(10)
+  .toArray();
+
+// Update
+await users.updateOne(
+  { _id: user._id },
+  { $set: { lastLogin: new Date() }, $inc: { loginCount: 1 } }
+);
+
+// Delete
+await users.deleteOne({ _id: user._id });</code></pre>
+
+            <h3>3. Aggregation Pipeline</h3>
+            <pre><code>const stats = await users.aggregate([
+  { $match: { active: true } },
+  { $group: {
+    _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
+    totalUsers: { $sum: 1 },
+    avgAge: { $avg: '$age' },
+    users: { $push: {
+      name: '$name',
+      email: '$email'
+    }}
+  }},
+  { $sort: { _id: -1 } }
+]).toArray();</code></pre>
+
+            <h3>4. Complex Query với Join</h3>
+            <pre><code>const usersWithPosts = await users.aggregate([
+  { $match: { active: true } },
+  { $lookup: {
+    from: 'posts',
+    localField: '_id',
+    foreignField: 'authorId',
+    as: 'posts'
+  }},
+  { $addFields: {
+    postCount: { $size: '$posts' }
+  }},
+  { $match: { postCount: { $gt: 0 } } },
+  { $sort: { postCount: -1 } }
+]).toArray();</code></pre>
+
+            <div class="warning-box">
+                <h3>Lưu Ý Quan Trọng</h3>
+                <ol>
+                    <li><strong>Connection Management</strong>: Luôn đóng connection khi ứng dụng kết thúc.</li>
+                    <li><strong>Error Handling</strong>: Luôn wrap operations trong try-catch blocks.</li>
+                    <li><strong>Performance</strong>: Sử dụng indexes cho các fields thường xuyên query.</li>
+                    <li><strong>Cursor Memory</strong>: Nhớ close cursor sau khi sử dụng để tránh memory leaks.</li>
+                    <li><strong>Bulk Operations</strong>: Sử dụng bulkWrite() cho multiple operations để tăng performance.</li>
+                    <li><strong>Aggregation</strong>: Sử dụng aggregation pipeline cho các query phức tạp.</li>
+                    <li><strong>ObjectId</strong>: Sử dụng <code>new mongoose.Types.ObjectId()</code> để tạo ObjectId mới.</li>
+                    <li><strong>Indexes</strong>: Tạo indexes trực tiếp trên collection để tối ưu query performance.</li>
+                </ol>
+                <pre><code>// Tạo index
+await users.createIndex({ email: 1 }, { unique: true });
+await users.createIndex({ name: 'text', bio: 'text' });</code></pre>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 MongoDB Native API Guide. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Syntax highlighting enhancement
+        document.querySelectorAll('pre code').forEach(block => {
+            // Simple syntax highlighting for JavaScript
+            let html = block.innerHTML;
+            
+            // Keywords
+            html = html.replace(/\b(const|let|var|function|async|await|return|if|else|for|while|new|this|true|false|null|undefined)\b/g, '<span style="color: #0077aa; font-weight: bold;">$1</span>');
+            
+            // Strings
+            html = html.replace(/('([^'\\]|\\.)*'|"([^"\\]|\\.)*")/g, '<span style="color: #669900;">$1</span>');
+            
+            // Comments
+            html = html.replace(/(\/\/.*$)/gm, '<span style="color: #999; font-style: italic;">$1</span>');
+            
+            // Numbers
+            html = html.replace(/\b(\d+)\b/g, '<span style="color: #aa5500;">$1</span>');
+            
+            // MongoDB operators
+            html = html.replace(/(\$\w+)/g, '<span style="color: #aa00aa; font-weight: bold;">$1</span>');
+            
+            block.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
