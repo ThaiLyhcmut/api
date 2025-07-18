@@ -162,6 +162,13 @@
             padding: 0;
         }
 
+        /* Syntax highlighting classes */
+        .keyword { color: #0077aa; font-weight: bold; }
+        .string { color: #669900; }
+        .comment { color: #999; font-style: italic; }
+        .number { color: #aa5500; }
+        .operator { color: #aa00aa; font-weight: bold; }
+
         .highlight {
             background-color: #fff3cd;
             padding: 1rem;
@@ -875,28 +882,7 @@ await users.createIndex({ name: 'text', bio: 'text' });</code></pre>
             });
         });
 
-        // Syntax highlighting enhancement
-        document.querySelectorAll('pre code').forEach(block => {
-            // Simple syntax highlighting for JavaScript
-            let html = block.innerHTML;
-            
-            // Keywords
-            html = html.replace(/\b(const|let|var|function|async|await|return|if|else|for|while|new|this|true|false|null|undefined)\b/g, '<span style="color: #0077aa; font-weight: bold;">$1</span>');
-            
-            // Strings
-            html = html.replace(/('([^'\\]|\\.)*'|"([^"\\]|\\.)*")/g, '<span style="color: #669900;">$1</span>');
-            
-            // Comments
-            html = html.replace(/(\/\/.*$)/gm, '<span style="color: #999; font-style: italic;">$1</span>');
-            
-            // Numbers
-            html = html.replace(/\b(\d+)\b/g, '<span style="color: #aa5500;">$1</span>');
-            
-            // MongoDB operators
-            html = html.replace(/(\$\w+)/g, '<span style="color: #aa00aa; font-weight: bold;">$1</span>');
-            
-            block.innerHTML = html;
-        });
+        // Syntax highlighting enhancement - Removed to prevent display issues
     </script>
 </body>
 </html>
